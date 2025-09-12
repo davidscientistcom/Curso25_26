@@ -1,33 +1,57 @@
-# Representación de la Información — **1. Introducción**
+# Capítulo 1 — Representación de la Información
 
-> Objetivo de este capítulo: entender qué es la **información**, en qué se diferencia de un **dato**, qué son las **señales** y por qué los ordenadores representan todo con **0 y 1**. Dejas listo el terreno para, en los siguientes capítulos, entrar en bits/bytes, bases numéricas y multimedia.
+## 1. Introducción
+
+El objetivo de este capítulo es comprender qué entendemos por **información**, cómo se diferencia de un **dato**, y por qué los ordenadores representan todo con **ceros y unos**. También se presentan los conceptos de **señal analógica** y **digital**, así como el proceso por el que un fenómeno físico (un sonido, una imagen, una medida de temperatura) se convierte en un archivo informático.
+
+Este punto de partida es esencial: solo cuando comprendemos que la base de toda la informática es la **codificación binaria de la información** podemos entender cómo funcionan las operaciones, la memoria, la comunicación en redes o los sistemas multimedia.
 
 
 
 ## 1.1 ¿Qué es la información?
 
-**Información** es aquello que **reduce incertidumbre** sobre algo. Si no cambia lo que sabes o puedes decidir, no aporta información.  
-Un **dato** es una **medición o registro crudo** (un número, un texto, una señal). La **información** emerge cuando **interpretas** ese dato **en contexto** para un propósito.
+En informática, la **información** es aquello que permite **reducir la incertidumbre** sobre una situación. Sin embargo, es importante diferenciar entre **dato** e **información**, pues no son lo mismo:
 
-- **Dato:** `19.3`  
-- **Contexto:** “temperatura ambiente (°C) en el aula ahora”.  
-- **Información:** “Hace fresco; enciende la calefacción”.
+* Un **dato** es un registro objetivo, sin contexto, que por sí solo no transmite significado.
+* La **información** surge cuando ese dato se **interpreta dentro de un contexto** y **sirve para un propósito**.
 
-> Reglas simples:
-> - **Dato → Información:** Dato + Contexto + Interpretación.
-> - **Información → Conocimiento:** Información verificada y reutilizable en el tiempo.
-> - **Conocimiento → Decisión/Acción:** Aplicación práctica en un caso real.
+**Ejemplo:**
 
-**Medida de información (intuición):** si la respuesta es **sí/no**, se necesita **1 bit** de información. Si hay **4 opciones igualmente probables**, necesitas **2 bits** (porque \( \log_2(4)=2 \)). No hace falta formalismo ahora; quédate con que **más opciones ⇒ más bits**.
+* Dato: `19.3`
+* Información: “La temperatura actual en el aula es 19.3 °C.”
+* Conocimiento: “Hace fresco, por tanto conviene encender la calefacción.”
+
+Podemos describir la relación de la siguiente manera:
+
+* **Dato → Información → Conocimiento → Decisión.**
+
+Desde un punto de vista formal, la **teoría de la información** (Claude Shannon, 1948) propone que la información es una medida de la reducción de incertidumbre. La cantidad de información necesaria para identificar un estado dentro de un conjunto de posibilidades se expresa con el logaritmo en base 2:
+
+$$
+I = \log_2(N)
+$$
+
+donde $N$ es el número de opciones igualmente probables.
+
+* Si la pregunta admite solo **sí/no**, basta con **1 bit**.
+* Si existen **4 opciones**, se necesitan **2 bits** ($\log_2(4) = 2$).
+* Para **8 opciones**, se requieren **3 bits** ($\log_2(8) = 3$).
+
+Así, **más opciones ⇒ más información necesaria**.
 
 
 
 ## 1.2 Del mundo físico a lo digital: señales
 
-Una **señal** es una magnitud física que **varía en el tiempo** (tensión eléctrica, presión del aire, luz…). Con señales representamos y transportamos datos.
+La información del mundo real se transmite a través de **señales**, es decir, magnitudes físicas que **varían en el tiempo** (voltaje, presión del aire, intensidad de la luz, etc.).
 
-- **Señal analógica:** varía de manera **continua** (cualquier valor de un rango). Ej.: la vibración del aire cuando hablas.
-- **Señal digital:** varía de manera **discreta** (valores “cuantizados”). Ej.: una onda cuadrada con dos niveles (bajo/alto).
+* **Señales analógicas:** varían de forma continua, pudiendo tomar infinitos valores dentro de un rango.
+
+  * Ejemplo: la onda sonora producida al hablar.
+
+* **Señales digitales:** toman valores discretos, limitados a un conjunto finito de niveles.
+
+  * Ejemplo: una onda cuadrada que solo adopta “alto” o “bajo”.
 
 ```
 Analógica (continua)           Digital (discreta)
@@ -37,77 +61,98 @@ Analógica (continua)           Digital (discreta)
 ~            ~                   └───┴───┴───┴─→ t
 ```
 
-**¿Por qué lo digital?**  
-1) **Robustez al ruido:** un pequeño error de tensión no cambia un **0** en **1** si no traspasa el **umbral**.  
-2) **Copia sin degradación:** duplicar bits no empeora la señal.  
-3) **Procesamiento y almacenamiento eficientes:** los circuitos lógicos y la memoria trabajan con niveles discretos.  
-4) **Integridad y seguridad:** es más fácil detectar/corregir errores y cifrar.
+### ¿Por qué preferimos lo digital?
+
+1. **Robustez al ruido:** un pequeño error en el voltaje no altera el significado si no supera el umbral que separa un 0 de un 1.
+2. **Copia sin degradación:** duplicar bits no deteriora la señal, mientras que las copias analógicas pierden calidad.
+3. **Procesamiento eficiente:** los circuitos electrónicos y memorias funcionan de forma más fiable con estados discretos.
+4. **Seguridad e integridad:** es más fácil detectar y corregir errores, así como cifrar la información.
 
 
 
-## 1.3 ¿Por qué 0 y 1? (visión física y lógica)
+## 1.3 ¿Por qué 0 y 1?
 
-Los ordenadores están construidos con **transistores** que actúan como **interruptores electrónicos**. A nivel de circuitos, se definen dos **niveles lógicos** (por ejemplo, “bajo” y “alto”) que se **codifican** como **0** y **1**. Aunque la tensión eléctrica sea continua, **el hardware la discretiza** y **solo considera dos estados estables**. Con esa base binaria se representa *cualquier* tipo de información (números, texto, imagen, sonido). fileciteturn0file1
+Los ordenadores se construyen con **transistores**, que funcionan como **interruptores electrónicos**. Cada transistor puede estar en dos estados estables: conducción (encendido) o corte (apagado).
 
-> Puntos finos pero importantes:
-> - **0/1 son convenciones lógicas.** Un “0” **no** significa “0 voltios exactos”: hay rangos tolerados (según la tecnología, p. ej. TTL/CMOS).
-> - El motivo de usar dos estados es **fiabilidad** y **simplicidad**: más estados ⇒ más sensibles al ruido y más costosos.
+Por convenio, estos estados se representan como:
 
+* **0** → nivel bajo.
+* **1** → nivel alto.
 
+Aunque la tensión eléctrica es continua, el hardware define **rangos de voltaje** que corresponden a 0 o 1, evitando la ambigüedad.
 
-## 1.4 Del fenómeno físico al archivo: la “tubería” mental
+El uso de dos estados no es casual:
 
-Cuando un ordenador “tiene información” sobre algo real, típicamente ha pasado por esta cadena:
-
-1) **Sensado:** un **sensor** convierte un fenómeno físico en una **señal eléctrica** (micrófono, cámara, termistor…).  
-2) **Muestreo (sampling):** medimos la señal a **intervalos regulares** (tomas por segundo).  
-3) **Cuantificación:** redondeamos cada muestra a uno de **N niveles** posibles.  
-4) **Codificación:** asignamos a cada nivel un **patrón binario** (0/1).  
-5) **Almacenamiento/Transmisión:** guardamos o enviamos esas secuencias de bits.
-
-> En capítulos siguientes detallaremos estos pasos para **audio**, **imagen** y **vídeo**, y veremos cómo entran conceptos como **frecuencia de muestreo**, **profundidad de bits** y **compresión**.
+* **Fiabilidad:** con más de dos estados, los circuitos serían muy sensibles al ruido.
+* **Simplicidad:** la aritmética binaria permite construir sistemas universales de cómputo con una base mínima.
 
 
 
-## 1.5 Vocabulario mínimo (lo justo para arrancar)
+## 1.4 Del fenómeno físico al archivo digital
 
-- **Señal analógica:** magnitud continua en el tiempo.  
-- **Señal digital:** magnitud discreta con niveles definidos.  
-- **Nivel lógico:** rango de tensión asociado a “0” o “1”.  
-- **Bit:** unidad mínima de información; puede ser 0 o 1. (Ampliaremos en el cap. 3). fileciteturn0file13  
-- **Codificación:** mapeo entre símbolos del mundo “humano” (letras, colores, notas) y patrones binarios.
+Para que un fenómeno del mundo real pueda ser procesado por un ordenador, sigue un flujo de conversión:
 
+1. **Sensado:** un sensor transforma el fenómeno físico en señal eléctrica (ej. micrófono, cámara, termómetro).
+2. **Muestreo (sampling):** se toma la señal a intervalos regulares en el tiempo.
+3. **Cuantificación:** cada muestra se aproxima a un nivel discreto dentro de un rango finito.
+4. **Codificación:** a cada nivel se le asigna una secuencia binaria (0 y 1).
+5. **Almacenamiento o transmisión:** los bits resultantes se guardan en memoria o se envían por una red.
 
-
-## 1.6 Errores típicos que conviene cortar de raíz
-
-- **“Digital = exacto perfecto”.** Falso: hay **ruido**, **cuantización** y **errores**, solo que podemos **detectarlos/mitigarlos** mejor.  
-- **“Binario es solo para números”.** No: **todo** se codifica en binario (texto, imágenes, audio…). fileciteturn0file7  
-- **Confundir dato con información.** Un número sin contexto **no** te dice qué hacer.  
-- **Pensar que 0/1 son voltajes exactos.** Son **rangos**; por eso el sistema es robusto.
+Este proceso es la base de la digitalización de audio, imágenes y vídeo. Conceptos como **frecuencia de muestreo** o **profundidad de bits** derivan de estas etapas.
 
 
 
-## 1.7 Mini‑ejercicios (de calentamiento)
+## 1.5 Vocabulario mínimo
 
-1) **Dato vs Información.** Clasifica cada ítem y explica por qué:  
-   a) “72” · b) “72 ppm” (pulso en reposo) · c) “Pulso bajo; consulta si te mareas”.  
-
-2) **Analógico o digital.** Marca **A** o **D**:  
-   a) Termómetro de mercurio. b) Pulsador on/off. c) Salida de un micrófono. d) Texto en un archivo `.txt`.
-
-3) **Bits e incertidumbre (intuición).** ¿Cuántos bits **mínimos** necesitas para identificar 8 destinos de envío equiprobables? ¿Y 3 destinos? (Pista: \( \log_2 \)).
-
-**Soluciones rápidas:**  
-- 1) a) Dato (sin contexto). b) Dato + contexto (puede empezar a informar). c) Información (acción).  
-- 2) a) A · b) D · c) A · d) D (internamente, texto = binario).  
-- 3) 8 destinos ⇒ \( \log_2(8)=3 \) bits. 3 destinos ⇒ entre 1 y 2 bits; el mínimo entero para codificar sin ambigüedad son **2 bits**.
+* **Señal analógica:** magnitud física continua en el tiempo.
+* **Señal digital:** magnitud discreta con un conjunto limitado de valores.
+* **Nivel lógico:** rango de voltaje asociado a “0” o “1”.
+* **Bit:** unidad mínima de información, que puede tomar los valores 0 o 1.
+* **Codificación:** asignación entre símbolos del mundo real (letras, colores, notas musicales) y combinaciones de bits.
 
 
 
-## 1.8 Resumen para llevar
+## 1.6 Errores comunes
 
-- **Información** = dato **con** contexto que **reduce incertidumbre**.  
-- El mundo es **analógico**, el ordenador **digitaliza** para trabajar **con 0 y 1** por **fiabilidad**. fileciteturn0file1  
-- La “tubería” mental: **sensar → muestrear → cuantificar → codificar → guardar/transmitir**.  
-- En los siguientes capítulos aterrizamos estas ideas en **bits/bytes, bases numéricas, operaciones**, y **multimedia (texto, imagen, audio, vídeo)**.
+* **“Digital = perfecto”.** Falso: lo digital también sufre ruido y errores, aunque es más fácil corregirlos.
+* **“El binario es solo para números”.** Incorrecto: todo puede codificarse en binario (texto, imágenes, sonido, vídeo).
+* **“Dato = Información”.** Un número aislado no es información hasta que se interpreta en contexto.
+* **“0 y 1 son voltajes exactos”.** No: son rangos de tensión definidos por la tecnología (TTL, CMOS, etc.).
+
+
+
+## 1.7 Actividades de repaso
+
+1. **Dato vs Información**
+   Clasifica los siguientes ejemplos como dato, información o conocimiento:
+   a) “72”
+   b) “72 ppm de pulso en reposo”
+   c) “El pulso es bajo, deberías consultar al médico si te mareas”.
+
+2. **Analógico o Digital**
+   Indica si el ejemplo es analógico (A) o digital (D):
+   a) Termómetro de mercurio
+   b) Interruptor de luz
+   c) Señal de un micrófono
+   d) Texto en un archivo `.txt`
+
+3. **Incertidumbre y bits**
+   ¿Cuántos bits son necesarios como mínimo para codificar:
+   a) 8 destinos posibles.
+   b) 3 destinos posibles.
+
+**Soluciones:**
+
+1. a) Dato · b) Dato en contexto (información inicial) · c) Información interpretada (conocimiento aplicado).
+2. a) A · b) D · c) A · d) D.
+3. a) $\log_2(8) = 3$ bits. · b) $\log_2(3) ≈ 1.58$, por tanto se necesitan **2 bits**.
+
+
+
+## 1.8 Resumen
+
+* La **información** es un dato con contexto que reduce la incertidumbre.
+* Todo el mundo físico es **analógico**, pero los ordenadores trabajan en **digital** porque es más robusto y eficiente.
+* La digitalización sigue la secuencia: **sensado → muestreo → cuantificación → codificación → almacenamiento/transmisión**.
+* El binario (0 y 1) es la base universal de representación, gracias a la fiabilidad y simplicidad de los transistores.
+* Todo lo que los ordenadores procesan —números, texto, imágenes, sonido o vídeo— es, en última instancia, una **combinación de bits**.
