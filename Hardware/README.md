@@ -1,0 +1,1 @@
+- La versión 0.1 NO es una versión definitiva, más bien es un borrador. Lo principal es que el formato no es correcto.
