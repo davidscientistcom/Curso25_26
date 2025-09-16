@@ -1,4 +1,4 @@
-### Ejercicios de Identificación de IPs y Máscaras (Clase A, B y C)
+   ### Ejercicios de Identificación de IPs y Máscaras (Clase A, B y C)
 
 1. **IP:** 10.0.0.5 | **Máscara:** 255.0.0.0  
    **Clase:** A
