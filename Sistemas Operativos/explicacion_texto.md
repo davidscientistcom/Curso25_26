@@ -59,6 +59,22 @@ Estas codificaciones, como **Windows-1252** o **ISO-8859-1**, surgieron para ext
     * **3 bytes:** Para alfabetos como el árabe o el cirílico.
     * **4 bytes:** Para emojis y otros caracteres muy específicos.
 
+### La Estructura de UTF-8
+
+UTF-8 utiliza un diseño inteligente de prefijos binarios. El decodificador no necesita buscar un marcador al final o contar los bytes; solo necesita examinar el **primer byte** de la secuencia.
+
+-   **1 byte:** Si el primer bit del byte es **0** (por ejemplo, `0xxxxxxx`), el decodificador sabe que es un carácter de 1 byte. Este es el caso de todos los caracteres **ASCII** tradicionales.
+
+-   **2, 3, o 4 bytes:** Si el primer bit es **1**, el decodificador cuenta cuántos unos hay al principio para saber la longitud de la secuencia.
+    -   Si el byte empieza con `110xxxxx`, son **2 bytes**.
+    -   Si el byte empieza con `1110xxxx`, son **3 bytes**.
+    -   Si el byte empieza con `11110xxx`, son **4 bytes**.
+
+Los bytes siguientes en la secuencia siempre empiezan con el patrón `10xxxxxx`. Esto permite al decodificador saber que son bytes de continuación y no el inicio de un nuevo carácter.
+
+
+
+
 **Ejemplo de Conversión (Codificación a Bytes):**
 
 | Carácter | Punto de Código Unicode | UTF-8 (en bytes hexadecimales) | Explicación |
