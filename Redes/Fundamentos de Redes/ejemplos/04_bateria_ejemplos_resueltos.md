@@ -9,6 +9,57 @@
   * Hosts por subred = $2^h - 2$.
   * Subredes = $2^b$.
 * “Octeto interesante” = el primero cuyo valor en la máscara no es 255 ni 0.
+
+###  **P2P** en subnetting
+
+* P2P = **punto a punto**.
+* Es un enlace donde **sólo hay dos dispositivos** (normalmente routers) conectados.
+* Ejemplo: una interfaz de un router conectada directamente a otra interfaz de otro router.
+
+En ese tipo de enlaces **no necesitas una red con cientos de hosts**, solo **2 direcciones IP válidas** (una para cada extremo).
+
+
+### Caso clásico: **/30**
+
+* Una red /30 tiene **4 direcciones en total**:
+
+  * 1 = dirección de red (no usable como host)
+  * 2 = host válido
+  * 3 = host válido
+  * 4 = broadcast (no usable como host)
+* Resultado: **2 hosts válidos**, justo lo que necesitas para un enlace entre 2 routers.
+* Por eso en **CCNA y en subnetting clásico** se suele enseñar que los enlaces P2P se configuran con **/30**.
+
+
+### Caso moderno: **/31 (RFC 3021)**
+
+* Una /31 tiene **2 direcciones totales**.
+* Tradicionalmente se decía: “no hay hosts, porque una es red y otra es broadcast”.
+* Pero desde 2000 (RFC 3021), se permite usar esas **2 direcciones como hosts** en enlaces P2P.
+* Así aprovechas mejor las direcciones:
+
+  * /30 ⇒ 4 direcciones “gastadas” → 2 útiles.
+  * /31 ⇒ 2 direcciones → **las 2 útiles**.
+
+
+
+### Ejemplo visual
+
+```
+/30 (255.255.255.252) → 4 direcciones
+   Red      Host A     Host B     Broadcast
+   .0       .1         .2         .3
+
+/31 (255.255.255.254) → 2 direcciones
+   Host A   Host B
+   .0       .1
+```
+
+* **/30** es la forma “clásica” de asignar enlaces punto a punto.
+* **/31** es la forma más moderna y eficiente (usada en routing actual), aunque en subnetting de FP/CCNA normalmente se queda en **/30** porque es el estándar de toda la vida.
+
+
+
 * **Tamaño de bloque** = $256 -$ (valor del octeto interesante en la máscara).
 * Para hallar la red: en el octeto interesante, $ \text{red} = \left\lfloor \dfrac{\text{octeto}}{\text{bloque}} \right\rfloor \times \text{bloque}$.
 * Broadcast = (misma red, pero octeto interesante + (bloque−1) y los siguientes octetos a 255).
