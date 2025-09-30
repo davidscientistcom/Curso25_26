@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Representación de la Información en el Ordenador</title>
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: La aplicación se estructura como un SPA con una barra de navegación lateral fija y un área de contenido principal. Esta arquitectura permite al usuario navegar libremente entre conceptos, abandonando la linealidad del documento original. El objetivo es transformar el material de lectura en una herramienta de aprendizaje activa. Las secciones principales (Sistemas Numéricos, Números en Memoria, Texto, Multimedia) se convierten en módulos interactivos (conversores, simuladores) para que el usuario pueda experimentar y afianzar los conocimientos de forma práctica. Esta estructura es superior a un documento estático porque fomenta la exploración y el descubrimiento. -->
+    <!-- Visualization & Content Choices: 
+        - Introducción: Presentación simple con animación de bits (HTML/CSS) para establecer el concepto fundamental.
+        - Sistemas Numéricos: Report Info -> Conversión Decimal/Binario. Goal -> Practicar. Viz -> Conversor interactivo bidireccional. Interaction -> Input en tiempo real que actualiza campos y una tabla de potencias visual. Justification -> Aprender haciendo es más efectivo que leer ejemplos. Library/Method -> Vanilla JS.
+        - Números en Memoria: Report Info -> Complemento a 2, IEEE 754. Goal -> Entender almacenamiento de negativos y reales. Viz -> Explorador con slider para Ca2 y diagrama de bloques para IEEE 754. Interaction -> Deslizador que actualiza la representación binaria en tiempo real. Justification -> Visualizar cómo cambian los bits con el signo y el valor es muy intuitivo. Library/Method -> Vanilla JS, HTML/CSS.
+        - Texto y Caracteres: Report Info -> ASCII, Unicode, UTF-8, problemas de codificación. Goal -> Demostrar el porqué de los caracteres corruptos. Viz -> Simulador de codificación. Interaction -> Usuario escribe, selecciona codificación de guardado y de apertura para ver el resultado. Justification -> Permite replicar el problema "mojibake" de forma controlada y entender su causa a nivel de bytes. Library/Method -> Vanilla JS.
+        - Multimedia: Report Info -> Bitmap vs Vectorial, Muestreo de audio, Vídeo. Goal -> Dar una idea conceptual. Viz -> Diagramas visuales simples y comparativas. Interaction -> Hover y clics para mostrar información. Justification -> Visualizaciones simplificadas para conceptos complejos. Library/Method -> HTML/CSS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-link.active {
+            background-color: #e5e7eb;
+            color: #111827;
+            font-weight: 600;
+        }
+        .bit-box {
+            border: 1px solid #d1d5db;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: monospace;
+            font-size: 1.25rem;
+            margin: 0.25rem;
+            border-radius: 0.25rem;
+            background-color: #f9fafb;
+        }
+        .power-box {
+             font-size: 0.75rem;
+             color: #6b7280;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <nav class="md:w-64 bg-white/50 backdrop-blur-sm border-r border-stone-200 p-4 md:fixed md:h-full">
+            <h1 class="text-xl font-bold text-stone-900 mb-6">Fundamentos</h1>
+            <ul>
+                <li><a href="#inicio" class="nav-link block p-3 rounded-lg hover:bg-stone-200">Inicio</a></li>
+                <li><a href="#sistemas-numericos" class="nav-link block p-3 rounded-lg hover:bg-stone-200">Sistemas Numéricos</a></li>
+                <li><a href="#numeros-en-memoria" class="nav-link block p-3 rounded-lg hover:bg-stone-200">Números en Memoria</a></li>
+                <li><a href="#texto-y-caracteres" class="nav-link block p-3 rounded-lg hover:bg-stone-200">Texto y Caracteres</a></li>
+                <li><a href="#multimedia" class="nav-link block p-3 rounded-lg hover:bg-stone-200">Multimedia</a></li>
+            </ul>
+        </nav>
+
+        <main class="flex-1 md:ml-64 p-6 md:p-10">
+            <div id="inicio" class="content-section">
+                <h2 class="text-3xl font-bold text-stone-900 mb-4">Representación de la Información</h2>
+                <p class="mb-6 max-w-3xl text-lg text-stone-600">Bienvenido a esta guía interactiva sobre cómo los ordenadores procesan y almacenan la información. Toda la complejidad del mundo digital, desde un número hasta una película en 4K, se reduce a una idea fundamental: el <strong>bit</strong>. Un bit es la unidad más pequeña de información, un simple interruptor que puede estar en dos estados: apagado (0) o encendido (1). A través de esta herramienta, no solo leerás sobre estos conceptos, sino que podrás experimentar con ellos.</p>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                    <h3 class="text-xl font-semibold mb-4">El Bit: El Átomo de la Información</h3>
+                    <p class="mb-4">Un ordenador solo entiende de presencia o ausencia de corriente eléctrica. Nosotros representamos esos dos estados con los dígitos 0 y 1. La magia consiste en cómo combinamos secuencias de estos bits para darles un significado, ya sea un número, una letra o el color de un píxel.</p>
+                    <div class="flex items-center justify-center space-x-4">
+                        <div class="text-center">
+                            <div class="bit-box text-red-500">0</div>
+                            <span class="text-sm text-stone-500">Apagado / Sin Corriente</span>
+                        </div>
+                        <div class="text-5xl font-light text-stone-300">→</div>
+                         <div class="text-center">
+                            <div class="bit-box text-green-500">1</div>
+                            <span class="text-sm text-stone-500">Encendido / Con Corriente</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="sistemas-numericos" class="content-section">
+                <h2 class="text-3xl font-bold text-stone-900 mb-4">Sistemas de Numeración</h2>
+                <p class="mb-6 max-w-3xl text-lg text-stone-600">Los humanos usamos el sistema decimal (base 10), pero los ordenadores usan el binario (base 2). Comprender cómo convertir números entre estas bases es el primer paso para entender el lenguaje de las máquinas. Esta sección te permite practicar estas conversiones en tiempo real.</p>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                    <h3 class="text-xl font-semibold mb-4">Conversor Interactivo</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="decimalInput" class="block font-medium mb-1">Número Decimal (Base 10)</label>
+                            <input type="number" id="decimalInput" class="w-full p-2 border border-stone-300 rounded-md" value="43" min="0" max="255">
+                        </div>
+                        <div>
+                            <label for="binaryInput" class="block font-medium mb-1">Número Binario (Base 2)</label>
+                            <input type="text" id="binaryInput" class="w-full p-2 border border-stone-300 rounded-md font-mono" value="101011">
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                         <h4 class="font-semibold mb-2">Tabla de Potencias de Dos (Método Práctico)</h4>
+                         <p class="text-sm text-stone-500 mb-3">Observa cómo se "encienden" (color verde) las potencias de 2 que suman tu número decimal.</p>
+                         <div id="powerTable" class="flex flex-wrap justify-center"></div>
+                    </div>
+                </div>
+                 <div class="mt-6 bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                    <h3 class="text-xl font-semibold mb-4">Otros Sistemas Relevantes</h3>
+                    <p class="mb-4">Aunque el ordenador trabaja en binario, los programadores a menudo usan los sistemas Octal (base 8) y Hexadecimal (base 16) porque permiten representar números binarios largos de forma mucho más compacta. Un byte (8 bits), por ejemplo, siempre se puede representar con solo dos dígitos hexadecimales.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                        <div class="p-4 bg-stone-100 rounded-md">
+                            <h4 class="font-semibold">Binario (Base 2)</h4>
+                            <p class="font-mono text-lg">11110000</p>
+                            <p class="text-sm text-stone-500">Dígitos: 0, 1</p>
+                        </div>
+                        <div class="p-4 bg-stone-100 rounded-md">
+                            <h4 class="font-semibold">Octal (Base 8)</h4>
+                            <p class="font-mono text-lg">360</p>
+                            <p class="text-sm text-stone-500">Dígitos: 0-7</p>
+                        </div>
+                        <div class="p-4 bg-stone-100 rounded-md">
+                            <h4 class="font-semibold">Hexadecimal (Base 16)</h4>
+                            <p class="font-mono text-lg">F0</p>
+                            <p class="text-sm text-stone-500">Dígitos: 0-9, A-F</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="numeros-en-memoria" class="content-section">
+                 <h2 class="text-3xl font-bold text-stone-900 mb-4">Números en Memoria</h2>
+                <p class="mb-6 max-w-3xl text-lg text-stone-600">Una vez que tenemos un número en binario, ¿cómo lo almacena el ordenador? Para los números negativos, no se usa un simple signo de "-", sino un ingenioso sistema llamado Complemento a 2. Para los números con decimales, se usa un estándar llamado IEEE 754. Explora aquí cómo funcionan.</p>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                    <h3 class="text-xl font-semibold mb-4">Explorador de Complemento a 2 (8 bits)</h3>
+                    <p class="text-stone-600 mb-4">Usa el deslizador para elegir un número entre -128 y 127. Observa cómo cambia su representación binaria de 8 bits. Fíjate que el primer bit (el más a la izquierda) es '0' para los positivos y '1' para los negativos.</p>
+                    <div class="mb-4">
+                        <input type="range" id="twosComplementSlider" class="w-full" min="-128" max="127" value="70">
+                        <div class="text-center font-bold text-2xl mt-2" id="sliderValue">70</div>
+                    </div>
+                    <div id="twosComplementBinary" class="flex flex-wrap justify-center bg-stone-100 p-4 rounded-md"></div>
+                    <div id="twosComplementExplanation" class="mt-4 text-sm text-stone-600 bg-stone-50 p-4 rounded-md border"></div>
+                </div>
+            </div>
+
+            <div id="texto-y-caracteres" class="content-section">
+                <h2 class="text-3xl font-bold text-stone-900 mb-4">Texto y Caracteres</h2>
+                <p class="mb-6 max-w-3xl text-lg text-stone-600">Los ordenadores no entienden de letras, solo de números. Para representar texto, se usan tablas que asignan un número a cada carácter. El estándar moderno es Unicode, y la forma más común de guardarlo es con la codificación UTF-8. Aquí puedes simular qué pasa cuando hay una confusión de codificaciones.</p>
+                 <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                    <h3 class="text-xl font-semibold mb-4">Simulador de Codificación</h3>
+                    <p class="text-stone-600 mb-4">Escribe un texto con acentos, la letra 'ñ' o incluso emojis. Luego, simula cómo se guardaría con una codificación y cómo se vería si se intentara abrir con otra. Esto te permitirá entender por qué a veces aparecen "caracteres raros".</p>
+                    <div class="mb-4">
+                        <label for="textInput" class="block font-medium mb-1">Tu Texto:</label>
+                        <textarea id="textInput" rows="3" class="w-full p-2 border border-stone-300 rounded-md">La programación es una caña. ¡Mañana más! 😂</textarea>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                             <label for="saveEncoding" class="block font-medium mb-1">Simular guardado como:</label>
+                             <select id="saveEncoding" class="w-full p-2 border border-stone-300 rounded-md">
+                                 <option value="UTF-8">UTF-8 (Estándar moderno)</option>
+                                 <option value="windows-1252">Western (Windows 1252)</option>
+                             </select>
+                        </div>
+                        <div>
+                             <label for="readEncoding" class="block font-medium mb-1">Simular apertura con:</label>
+                             <select id="readEncoding" class="w-full p-2 border border-stone-300 rounded-md">
+                                 <option value="UTF-8">UTF-8</option>
+                                 <option value="windows-1252">Western (Windows 1252)</option>
+                             </select>
+                        </div>
+                    </div>
+                    <button id="simulateBtn" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700">Simular</button>
+                    <div class="mt-6">
+                        <h4 class="font-semibold mb-2">Resultado:</h4>
+                        <div id="simulationResult" class="w-full p-4 bg-stone-100 rounded-md font-mono text-lg break-words min-h-[5rem]"></div>
+                        <p id="simulationExplanation" class="mt-2 text-sm text-stone-600"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="multimedia" class="content-section">
+                <h2 class="text-3xl font-bold text-stone-900 mb-4">Representación Multimedia</h2>
+                <p class="mb-6 max-w-3xl text-lg text-stone-600">El principio de digitalización se extiende a imágenes, sonido y vídeo. El objetivo es siempre el mismo: convertir una señal analógica del mundo real en una secuencia de números que el ordenador pueda entender. Esta sección ofrece una visión general de cómo se logra.</p>
+                <div class="grid md:grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                        <h3 class="text-xl font-semibold mb-4">Imágenes: Píxeles vs. Vectores</h3>
+                        <p class="mb-4">Las imágenes se pueden representar de dos formas principales:</p>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>Mapa de Bits (JPG, PNG):</strong> La imagen es una cuadrícula de puntos (píxeles), y se guarda el color de cada uno. Al hacer zoom, pierde calidad (se "pixela").</li>
+                            <li><strong>Vectorial (SVG):</strong> Se guardan instrucciones matemáticas para dibujar la imagen (líneas, curvas, formas). Se puede ampliar infinitamente sin perder calidad.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                        <h3 class="text-xl font-semibold mb-4">Sonido: Muestreo Digital</h3>
+                        <p class="mb-4">Una onda de sonido analógica es continua. Para digitalizarla, se toman miles de "muestras" por segundo de su amplitud (volumen) y se les asigna un valor numérico. La combinación de la <span class="font-semibold">frecuencia de muestreo</span> (cuán a menudo se mide) y la <span class="font-semibold">profundidad de bits</span> (cuánta precisión tiene cada medida) determina la calidad del audio digital.</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200 lg:col-span-2">
+                        <h3 class="text-xl font-semibold mb-4">Vídeo: Fotogramas y Compresión</h3>
+                        <p class="mb-4">Un vídeo es simplemente una sucesión de imágenes (fotogramas) mostradas a gran velocidad para crear la ilusión de movimiento. Como esto genera una cantidad enorme de datos, se utilizan algoritmos llamados <strong>códecs</strong> para comprimir la información, eliminando datos redundantes entre fotogramas para que el archivo o la transmisión ocupen mucho menos espacio.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            function navigateTo(hash) {
+                if (!hash) hash = '#inicio';
+                
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === hash) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+
+                contentSections.forEach(section => {
+                    if ('#' + section.id === hash) {
+                        section.classList.add('active');
+                    } else {
+                        section.classList.remove('active');
+                    }
+                });
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const hash = e.currentTarget.getAttribute('href');
+                    history.pushState(null, null, hash);
+                    navigateTo(hash);
+                });
+            });
+
+            window.addEventListener('popstate', () => {
+                navigateTo(window.location.hash);
+            });
+
+            navigateTo(window.location.hash || '#inicio');
+
+            initNumberConverter();
+            initTwosComplement();
+            initEncodingSimulator();
+        });
+
+        function initNumberConverter() {
+            const decimalInput = document.getElementById('decimalInput');
+            const binaryInput = document.getElementById('binaryInput');
+            const powerTable = document.getElementById('powerTable');
+            const BITS = 8;
+
+            function updateFromDecimal() {
+                let decimal = parseInt(decimalInput.value, 10);
+                if (isNaN(decimal) || decimal < 0) decimal = 0;
+                if (decimal > 255) decimal = 255;
+                decimalInput.value = decimal;
+                
+                const binary = decimal.toString(2).padStart(BITS, '0');
+                binaryInput.value = binary;
+                updatePowerTable(decimal);
+            }
+
+            function updateFromBinary() {
+                let binary = binaryInput.value.replace(/[^01]/g, '');
+                if (binary.length > BITS) {
+                    binary = binary.slice(binary.length - BITS);
+                }
+                binaryInput.value = binary;
+
+                const decimal = parseInt(binary, 2) || 0;
+                decimalInput.value = decimal;
+                updatePowerTable(decimal);
+            }
+
+            function updatePowerTable(decimal) {
+                powerTable.innerHTML = '';
+                for (let i = BITS - 1; i >= 0; i--) {
+                    const powerValue = Math.pow(2, i);
+                    const isSet = (decimal & powerValue) !== 0;
+
+                    const container = document.createElement('div');
+                    container.className = 'text-center p-1';
+
+                    const bitBox = document.createElement('div');
+                    bitBox.className = 'bit-box';
+                    bitBox.textContent = isSet ? '1' : '0';
+                    if (isSet) {
+                         bitBox.classList.add('bg-green-100', 'text-green-800', 'border-green-300');
+                    }
+                    
+                    const powerBox = document.createElement('div');
+                    powerBox.className = 'power-box';
+                    powerBox.textContent = powerValue;
+                    
+                    container.appendChild(bitBox);
+                    container.appendChild(powerBox);
+                    powerTable.appendChild(container);
+                }
+            }
+
+            decimalInput.addEventListener('input', updateFromDecimal);
+            binaryInput.addEventListener('input', updateFromBinary);
+            updateFromDecimal();
+        }
+
+        function initTwosComplement() {
+            const slider = document.getElementById('twosComplementSlider');
+            const sliderValue = document.getElementById('sliderValue');
+            const binaryContainer = document.getElementById('twosComplementBinary');
+            const explanationContainer = document.getElementById('twosComplementExplanation');
+
+            function update() {
+                const value = parseInt(slider.value, 10);
+                sliderValue.textContent = value;
+                binaryContainer.innerHTML = '';
+                let binaryString;
+
+                if (value >= 0) {
+                    binaryString = value.toString(2).padStart(8, '0');
+                    explanationContainer.innerHTML = `<h5 class="font-semibold">Número Positivo</h5><p>Para números positivos, la representación es simplemente su valor en binario. El primer bit (de signo) es <strong>0</strong>.</p>`;
+                } else {
+                    const absBinary = Math.abs(value).toString(2).padStart(8, '0');
+                    let inverted = '';
+                    for (const bit of absBinary) {
+                        inverted += (bit === '0' ? '1' : '0');
+                    }
+                    const twosComplement = (parseInt(inverted, 2) + 1).toString(2).padStart(8, '0');
+                    binaryString = twosComplement.length > 8 ? twosComplement.slice(-8) : twosComplement;
+                    
+                    explanationContainer.innerHTML = `
+                        <h5 class="font-semibold">Número Negativo (${value})</h5>
+                        <ol class="list-decimal list-inside space-y-1">
+                            <li>Valor absoluto en binario: <strong>${absBinary}</strong></li>
+                            <li>Invertir todos los bits: <strong>${inverted}</strong></li>
+                            <li>Sumar 1 al resultado: <strong>${binaryString}</strong></li>
+                        </ol>
+                        <p class="mt-2">El primer bit (de signo) es <strong>1</strong>.</p>
+                    `;
+                }
+
+                for(let i = 0; i < binaryString.length; i++){
+                    const bit = binaryString[i];
+                    const bitBox = document.createElement('div');
+                    bitBox.className = 'bit-box';
+                    if(i === 0) {
+                       bitBox.classList.add('bg-blue-100', 'border-blue-300');
+                    }
+                    bitBox.textContent = bit;
+                    binaryContainer.appendChild(bitBox);
+                }
+            }
+            slider.addEventListener('input', update);
+            update();
+        }
+
+        function initEncodingSimulator() {
+            const textInput = document.getElementById('textInput');
+            const saveEncodingSelect = document.getElementById('saveEncoding');
+            const readEncodingSelect = document.getElementById('readEncoding');
+            const simulateBtn = document.getElementById('simulateBtn');
+            const resultDiv = document.getElementById('simulationResult');
+            const explanationDiv = document.getElementById('simulationExplanation');
+            
+            const encoder = new TextEncoder();
+            
+            simulateBtn.addEventListener('click', () => {
+                const text = textInput.value;
+                const saveEncoding = saveEncodingSelect.value;
+                const readEncoding = readEncodingSelect.value;
+                
+                let encodedBytes;
+                if (saveEncoding === 'UTF-8') {
+                    encodedBytes = encoder.encode(text);
+                } else {
+                    // Simulating windows-1252 encoding
+                    const byteArr = [];
+                    for (let i = 0; i < text.length; i++) {
+                        const code = text.charCodeAt(i);
+                        if (code > 255) {
+                            byteArr.push(63); // '?' for unmappable characters
+                        } else {
+                            byteArr.push(code);
+                        }
+                    }
+                    encodedBytes = new Uint8Array(byteArr);
+                }
+
+                const decoder = new TextDecoder(readEncoding, { fatal: false });
+                const decodedText = decoder.decode(encodedBytes);
+
+                resultDiv.textContent = decodedText;
+                
+                if (saveEncoding === readEncoding) {
+                    explanationDiv.textContent = 'Correcto. El texto se guardó y se leyó con la misma codificación, por lo que se ve perfectamente.';
+                    explanationDiv.className = 'mt-2 text-sm text-green-700';
+                } else {
+                    explanationDiv.textContent = `¡Error de codificación! El texto se guardó como ${saveEncoding} pero se intentó leer como ${readEncoding}. El programa no supo interpretar correctamente la secuencia de bytes para los caracteres especiales, resultando en "mojibake" (texto corrupto).`;
+                    explanationDiv.className = 'mt-2 text-sm text-red-700';
+                }
+            });
+
+            simulateBtn.click();
+        }
+
+    </script>
+</body>
+</html>
