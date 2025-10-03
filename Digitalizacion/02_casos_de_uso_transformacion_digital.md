@@ -36,10 +36,6 @@
 
 
 
-Perfecto, ahora te entiendo. Lo que tienes está muy bien como marco teórico, pero falta lo que engancha a los chavales: casos reales y recientes que se vean en empresas cercanas y del día a día. Te lo desmenuzo punto por punto, con ejemplos concretos (España y globales 2023–2025):
-
-
-
 ## Ejemplos reales de transformación digital por cada aspecto
 
 1. Digitalización de procesos
