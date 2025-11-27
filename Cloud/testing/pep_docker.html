@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pyproject.toml en Docker</title>
+    <!-- Importar fuentes de Google: Urbanist para texto, Source Code Pro para código -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Importar Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* 1. CONFIGURACIÓN GENERAL */
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: #e2e8f0; /* Fondo gris claro */
+            font-family: 'Urbanist', sans-serif;
+            scroll-behavior: smooth; /* Desplazamiento suave */
+        }
+
+        body {
+            display: grid; /* Cambiado a grid para centrar todo */
+            place-items: center;
+            min-height: 100vh;
+            padding: 20px; /* Padding general */
+            gap: 20px; /* Espacio entre la slide y la navegación */
+        }
+        
+        /* Contenedor principal para la slide */
+        .slide-wrapper {
+            width: 100%;
+            max-width: 1280px; /* Ancho máximo de la diapositiva */
+            height: 720px; /* Altura fija (relación 16:9) */
+            position: relative; /* Para que las slides se superpongan */
+            border-radius: 12px;
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.25);
+            overflow: hidden; /* Oculta slides que no están activas */
+        }
+
+        .slide-container {
+            width: 100%;
+            height: 100%;
+            background-color: #1a1a1a; /* Fondo oscuro principal */
+            
+            /* Oculto por defecto, JS lo controla */
+            display: none; 
+            
+            flex-direction: column;
+            justify-content: flex-start; /* Alineación superior */
+            align-items: flex-start; /* Alineación izquierda */
+            padding: 60px 80px;
+            color: #f0f0f0; /* Color de texto principal */
+            
+            /* Posición absoluta para apilarlas */
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Clase para mostrar la diapositiva activa */
+        .active-slide {
+            display: flex; /* Mostrar la diapositiva activa */
+        }
+
+        /* 2. TIPOGRAFÍA CONSISTENTE */
+        .slide-container h1,
+        .slide-container h2,
+        .slide-container h3 {
+            font-family: 'Urbanist', sans-serif;
+            font-weight: 700;
+            margin: 0;
+            color: #ffffff; /* Títulos en blanco brillante */
+        }
+
+        .slide-container p,
+        .slide-container li,
+        .slide-container .subtitle,
+        .slide-container th,
+        .slide-container td {
+            font-family: 'Urbanist', sans-serif;
+            font-weight: 400;
+            color: #f0f0f0; /* Texto del cuerpo */
+            font-size: 20px; 
+            line-height: 1.6;
+        }
+        
+        .slide-container h1 {
+            font-size: 64px;
+            line-height: 1.1;
+        }
+
+        .slide-container .slide-title { /* H2 */
+            font-size: 48px;
+            margin-bottom: 30px;
+            width: 100%;
+            text-align: left;
+        }
+
+        .slide-container h3 {
+            font-size: 24px;
+            color: #39ff14; /* Acento verde neón */
+            margin-bottom: 15px;
+        }
+
+        .slide-container .subtitle {
+            font-size: 26px;
+            margin-top: 20px;
+            opacity: 0.9;
+        }
+        
+        .slide-container ul {
+            padding-left: 25px;
+            margin: 0;
+        }
+        
+        .slide-container li {
+            margin-bottom: 10px;
+        }
+        
+        .slide-container li::marker {
+            color: #39ff14;
+        }
+        
+        .slide-container .highlight {
+             color: #39ff14;
+             font-weight: 700;
+        }
+        
+        .slide-container .danger-highlight {
+             color: #ff6161;
+             font-weight: 700;
+        }
+
+        /* 3. ESTILOS DE CÓDIGO */
+        .slide-container pre {
+            background-color: #252525; /* Fondo ligeramente más claro para código */
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 16px;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Scroll si es necesario */
+            white-space: pre; /* Mantiene el formato */
+            font-family: 'Source Code Pro', monospace;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+
+        .slide-container code {
+            font-family: 'Source Code Pro', monospace;
+            color: #e0e0e0;
+        }
+        
+        .slide-container p > code, .slide-container li > code {
+            font-size: 18px;
+            background-color: #333;
+            padding: 3px 6px;
+            border-radius: 4px;
+            color: #f0f0f0;
+        }
+
+        .slide-container pre .comment { color: #999999; }
+        .slide-container pre .keyword { color: #f92672; }
+        .slide-container pre .string { color: #a6e22e; }
+        .slide-container pre .function { color: #66d9ef; }
+        .slide-container pre .number { color: #ae81ff; }
+        .slide-container pre .class { color: #e6db74; }
+        .slide-container pre .ini-header { color: #f92672; font-weight: 700; }
+        .slide-container pre .xml-tag { color: #f92672; }
+        .slide-container pre .xml-attr { color: #a6e22e; }
+        .slide-container pre .xml-value { color: #fd971f; }
+
+
+        /* 4. DEFINICIONES DE DISEÑO (LAYOUTS) */
+        
+        .slide-container .content-area {
+            width: 100%;
+            flex-grow: 1; /* Ocupa el espacio restante */
+            overflow: hidden; /* Previene desbordamiento */
+            display: flex; /* Para layouts internos */
+            flex-direction: column;
+        }
+        
+        /* Layout: Title_Slide */
+        .title-layout {
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .title-layout h1 {
+            text-align: center;
+        }
+        .title-layout .subtitle {
+            max-width: 800px;
+        }
+        
+        /* Layout: Two_Column (Genérico) */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            width: 100%;
+            height: 100%;
+            align-items: stretch;
+        }
+        
+        .two-column > div {
+             overflow-y: auto; /* Scroll si el contenido es largo */
+             padding-right: 15px; /* Espacio para scrollbar */
+             height: 100%;
+        }
+        
+        .two-column > div h3 {
+             margin-top: 0;
+        }
+        
+        /* Layout: Q&A */
+        .qa-layout {
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .qa-layout h2 {
+            font-size: 80px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .qa-layout p {
+            font-size: 28px;
+        }
+        
+        /* 5. NAVEGACIÓN */
+        .navigation-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: -20px; /* Lo sube al espacio del gap del body */
+            z-index: 10;
+        }
+
+        .nav-button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-button:hover {
+            background-color: #39ff14;
+            color: #1a1a1a;
+            transform: scale(1.1);
+        }
+        
+        .nav-button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+            opacity: 0.6;
+            transform: none;
+        }
+
+        #slide-counter {
+            font-size: 20px;
+            color: #1a1a1a;
+            font-weight: 700;
+            min-width: 80px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Contenedor de las diapositivas -->
+    <div class="slide-wrapper">
+
+        <!-- Slide 1: Title_Slide -->
+        <div class="slide-container" id="slide1">
+            <div class="title-layout">
+                <h1>Tu Flujo: `git clone` -> `docker build`</h1>
+                <p class="subtitle">¿Por qué `pyproject.toml` es VITAL para los Servicios en Docker (y no solo para Librerías)?</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: La Suposición (¡Muy Lógica!) -->
+        <div class="slide-container" id="slide2">
+            <h2 class="slide-title">La Suposición (¡Muy Lógica!)</h2>
+            <div class="content-area">
+                <p style="font-size: 24px;">"Entiendo PEP 518/517 para construir librerías y publicarlas en PyPI..."</p>
+                
+                <h3 style="margin-top: 30px; color: #ff6161;"><i class="fa-solid fa-server"></i> PERO...</h3>
+                <p style="font-size: 24px;">"...Yo no hago librerías. Yo construyo <strong>SERVICIOS</strong>."</p>
+                <p style="font-size: 24px;">"Mi flujo es: <code style="font-size: 24px;">git clone</code>, <code style="font-size: 24px;">docker build</code>, <code style="font-size: 24px;">docker run</code>."</p>
+                
+                <p style="font-size: 24px; margin-top: 30px;">Esta distinción es clave. Y tienes razón, tu flujo es el estándar de la industria para servicios (APIs, workers, etc.).</p>
+                
+                <p style="font-size: 24px; margin-top: 30px;">La respuesta: `pyproject.toml` resuelve <strong>dos problemas críticos</strong> que tu flujo de Docker tiene.</p>
+            </div>
+        </div>
+
+        <!-- Slide 3: Los 2 Problemas Críticos de tu Flujo -->
+        <div class="slide-container" id="slide3">
+            <h2 class="slide-title">Los 2 Problemas Críticos de tu Flujo</h2>
+            <div class="content-area">
+                <div class="two-column" style="margin-top: 20px;">
+                    <div>
+                        <h3 style="color: #ff6161;"><i class="fa-solid fa-bomb"></i> 1. El Problema de la Reproducibilidad</h3>
+                        <p>Tu `Dockerfile` "antiguo" usa `requirements.txt`.</p>
+                        <p>Si `requirements.txt` dice <code>fastapi&gt;=0.100</code>, hoy instalará la `0.100` y mañana la `0.101`.</p>
+                        <p class="danger-highlight" style="font-size: 24px;">¡Tu build de Docker no es determinístico! Es una "bomba de tiempo" que puede romperse en cualquier momento sin que cambies tu código.</p>
+                    </div>
+                    <div>
+                        <h3 style="color: #ff6161;"><i class="fa-solid fa-eye-slash"></i> 2. El Problema del "Build Ciego"</h3>
+                        <p>Tu `Dockerfile` "antiguo" asume que el código que clonaste de Git... ¡funciona!</p>
+                        <p>¿Qué pasa si alguien subió código que rompe los tests? ¿O que no pasa `flake8`? ¿O que tiene un fallo de seguridad detectado por `bandit`?</p>
+                        <p class="danger-highlight" style="font-size: 24px;">¡Tu `docker build` tendrá éxito y crearás una imagen ROTA sin saberlo!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: El Flujo "Antiguo" (El Problema) -->
+        <div class="slide-container" id="slide4">
+            <h2 class="slide-title">El Flujo "Antiguo" (El Problema)</h2>
+            <div class="content-area">
+                <p>Este `Dockerfile` sufre de ambos problemas.</p>
+                <pre style="height: 450px;"><code><span class="keyword">FROM</span> <span class="string">python:3.10-slim</span>
+
+<span class="keyword">WORKDIR</span> <span class="string">/app</span>
+<span class="keyword">COPY</span> . .
+
+<span class="comment"># 1. EL PROBLEMA DE REPRODUCIBILIDAD</span>
+<span class="comment">#    - ¿Qué versión de fastapi se instalará HOY?</span>
+<span class="comment">#    - ¿Y mañana? ¿Funcionará?</span>
+<span class="danger-highlight"><span class="keyword">RUN</span> pip install -r requirements.txt</span>
+
+<span class="comment"># 2. EL PROBLEMA DEL "BUILD CIEGO"</span>
+<span class="comment">#    - Estamos copiando código (COPY .) que</span>
+<span class="comment">#      podría estar roto, no pasar tests,</span>
+<span class="comment">#      o tener fallos de linting.</span>
+<span class="comment">#    - ¡Y lo vamos a ejecutar igualmente!</span>
+<span class="keyword">CMD</span> [<span class="string">"python"</span>, <span class="string">"src/main.py"</span>]
+</code></pre>
+            </div>
+        </div>
+        
+        <!-- Slide 5: Solución 1: El Manifiesto de Dependencias -->
+        <div class="slide-container" id="slide5">
+            <h2 class="slide-title">Solución 1: El Manifiesto de Dependencias</h2>
+            <div class="content-area">
+                <p><code>pyproject.toml</code> + <span class="highlight">un fichero `.lock`</span> (ej. `poetry.lock` o `pdm.lock`) reemplazan a `requirements.txt`.</p>
+                
+                <h3 style="margin-top: 20px;">¿Qué es un fichero `.lock`?</h3>
+                <p>Es un "manifiesto" de build 100% determinístico. Contiene las versiones <span class="highlight">exactas</span> de CADA dependencia (y sub-dependencia) con sus hashes.</p>
+                <p>Tu `pyproject.toml` dice "quiero `fastapi`".</p>
+                <p>Tu `poetry.lock` dice "para eso, te instalaré `fastapi-0.100.1` (hash: ...), `starlette-0.30.0` (hash: ...), `pydantic-2.1.0` (hash: ...), etc."</p>
+                
+                <p class="highlight" style="font-size: 24px; margin-top: 20px;">¡Esto resuelve el Problema 1! Tu build ahora es 100% reproducible.</p>
+            </div>
+        </div>
+        
+        <!-- Slide 6: El "Nuevo" Dockerfile (Reproducible) -->
+        <div class="slide-container" id="slide6">
+            <h2 class="slide-title">El "Nuevo" Dockerfile (Reproducible)</h2>
+            <div class="content-area">
+                <p>Usando `pyproject.toml` y `poetry` (una herramienta que usa el fichero).</p>
+                <pre style="height: 450px;"><code><span class="keyword">FROM</span> <span class="string">python:3.10-slim</span>
+<span class="keyword">WORKDIR</span> <span class="string">/app</span>
+
+<span class="comment"># Instalar Poetry</span>
+<span class="keyword">RUN</span> pip install poetry
+<span class="keyword">RUN</span> poetry config virtualenvs.create false
+
+<span class="comment"># --- ¡LA CLAVE ESTÁ AQUÍ! ---</span>
+<span class="comment"># 1. Copiamos SÓLO los manifiestos</span>
+<span class="keyword">COPY</span> pyproject.toml poetry.lock* ./
+
+<span class="comment"># 2. Instalamos desde el LOCK FILE</span>
+<span class="comment">#    Garantiza un build 100% determinístico.</span>
+<span class="comment">#    --no-root: no instales "mi_app" (aún no está)</span>
+<span class="comment">#    --no-dev: no instales pytest, flake8, etc. (son para CI, no runtime)</span>
+<span class="highlight"><span class="keyword">RUN</span> poetry install --no-root --no-dev</span>
+
+<span class="comment"># 3. Copiamos el código fuente (DESPUÉS de las dependencias)</span>
+<span class="comment">#    (¡Esto mejora el cacheo de capas de Docker!)</span>
+<span class="keyword">COPY</span> src/ ./src/
+
+<span class="keyword">CMD</span> [<span class="string">"poetry"</span>, <span class="string">"run"</span>, <span class="string">"python"</span>, <span class="string">"src/main.py"</span>]
+</code></pre>
+            </div>
+        </div>
+
+        <!-- Slide 7: Solución 2: El Manifiesto de Calidad -->
+        <div class="slide-container" id="slide7">
+            <h2 class="slide-title">Solución 2: El Manifiesto de Calidad</h2>
+            <div class="content-area">
+                <p>¡El mismo `pyproject.toml` que clonaste de Git resuelve el Problema 2!</p>
+                <p>Contiene el <span class="highlight">"Contrato de Calidad"</span> en las secciones `[tool.*]`.</p>
+                
+                <pre style="height: 400px;"><code><span class="comment"># Fichero: pyproject.toml</span>
+
+<span class="comment"># ... (sección de dependencias [tool.poetry]) ...</span>
+
+<span class="comment"># --- EL CONTRATO DE CALIDAD ---</span>
+
+<span class="ini-header">[tool.flake8]</span>
+<span class="keyword">max-line-length</span> = 88
+<span class="keyword">ignore</span> = "E203, W503"
+
+<span class="ini-header">[tool.mypy]</span>
+<span class="keyword">strict</span> = true
+<span class="keyword">ignore_missing_imports</span> = true
+
+<span class="ini-header">[tool.bandit]</span>
+<span class="keyword">skips</span> = [<span class="string">"B101"</span>]
+
+<span class="ini-header">[tool.pytest.ini_options]</span>
+<span class="keyword">pythonpath</span> = [<span class="string">"src"</span>]
+</code></pre>
+                <p style="margin-top: 15px;">Esto le dice a tu sistema de CI (GitHub Actions, Jenkins) *exactamente* qué reglas forzar.</p>
+            </div>
+        </div>
+
+        <!-- Slide 8: El Flujo Profesional (CI + Docker) -->
+        <div class="slide-container" id="slide8">
+            <h2 class="slide-title">El Flujo Profesional (CI + Docker)</h2>
+            <div class="content-area" style="align-items: center; justify-content: center;">
+                <p style="font-size: 24px;">Tu `docker build` no se ejecuta "a ciegas". Se ejecuta *después* de que un pipeline de CI haya validado el "Contrato de Calidad".</p>
+                
+                <h3 style="margin-top: 30px; text-align: center;">Tu Flujo (`git clone` -> `docker build`) se convierte en:</h3>
+                
+                <pre style="font-size: 20px; text-align: center; border: none; background: none; margin-top: 30px;">
+<span class="keyword">git push</span>
+    ↓
+<span class="function">GitHub Actions (CI)</span>
+    ↓
+<span class="number">1.</span> <span class="string">poetry install</span> (Instala TODO, incl. `pytest`)
+<span class="number">2.</span> <span class="string">poetry run flake8 src</span> (Lee <span class="highlight">[tool.flake8]</span>)
+<span class="number">3.</span> <span class="string">poetry run mypy src</span>   (Lee <span class="highlight">[tool.mypy]</span>)
+<span class="number">4.</span> <span class="string">poetry run pytest</span>     (Lee <span class="highlight">[tool.pytest]</span>)
+    ↓
+<span class="function">SI TODO PASA...</span>
+    ↓
+<span class="danger-highlight"><span class="function">docker build</span></span> (Usando el `Dockerfile` reproducible)
+    ↓
+<span class="class">docker push</span> (A la registry)
+</pre>
+            </div>
+        </div>
+
+        <!-- Slide 9: Conclusión: Los Dos Roles del Manifiesto -->
+        <div class="slide-container" id="slide9">
+            <h2 class="slide-title">Conclusión: Los 2 Roles del Manifiesto</h2>
+            <div class="content-area">
+                <p style="font-size: 28px;">En tu flujo de <span class="highlight">Servicio Docker</span>, el `pyproject.toml` NO es para "construir librerías".</p>
+                <p style="font-size: 28px;">Es el **Manifiesto Único de tu Proyecto** que cumple dos roles:</p>
+                
+                <div class="two-column" style="margin-top: 40px;">
+                    <div>
+                        <h3><i class="fa-solid fa-lock" style="color: #39ff14;"></i> Rol 1: Manifiesto de Build</h3>
+                        <p><strong>Para:</strong> Docker (y `poetry`)</p>
+                        <p><strong>Qué usa:</strong> `[tool.poetry.dependencies]` + `poetry.lock`.</p>
+                        <p><strong>Resultado:</strong> Un build 100% reproducible y determinístico. (Resuelve Problema 1).</p>
+                    </div>
+                    <div>
+                        <h3><i class="fa-solid fa-shield-halved" style="color: #39ff14;"></i> Rol 2: Manifiesto de Calidad</h3>
+                        <p><strong>Para:</strong> El Pipeline de CI (y `poetry`)</p>
+                        <p><strong>Qué usa:</strong> `[tool.flake8]`, `[tool.mypy]`, `[tool.pytest]`.</p>
+                        <p><strong>Resultado:</strong> Un "Quality Gate" que impide que código roto llegue a producción. (Resuelve Problema 2).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Q&A -->
+        <div class="slide-container" id="slide10">
+            <div class="qa-layout">
+                <h2>Resumen</h2>
+                <p><code>pyproject.toml</code> es el "plano" (calidad) y la "lista de materiales" (dependencias) de tu servicio.</p>
+                <h2 style="margin-top: 40px;">¿Preguntas?</h2>
+            </div>
+        </div>
+        
+    </div> <!-- Fin de .slide-wrapper -->
+    
+    <!-- Controles de Navegación -->
+    <div class="navigation-controls">
+        <button id="prev-button" class="nav-button" title="Anterior">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <span id="slide-counter">1 / 10</span>
+        <button id="next-button" class="nav-button" title="Siguiente">
+            <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Seleccionar todos los contenedores de diapositivas
+            const slides = document.querySelectorAll('.slide-container');
+            const totalSlides = slides.length;
+            let currentSlideIndex = 0;
+
+            // Elementos de la UI de navegación
+            const prevButton = document.getElementById('prev-button');
+            const nextButton = document.getElementById('next-button');
+            const slideCounter = document.getElementById('slide-counter');
+
+            /**
+             * Muestra la diapositiva en el índice dado y actualiza la UI.
+             * @param {number} index - El índice de la diapositiva a mostrar.
+             */
+            function showSlide(index) {
+                // Ocultar todas las diapositivas
+                slides.forEach((slide) => {
+                    slide.classList.remove('active-slide');
+                });
+
+                // Mostrar la diapositiva actual
+                if (slides[index]) {
+                    slides[index].classList.add('active-slide');
+                    currentSlideIndex = index;
+                }
+
+                // Actualizar el contador
+                slideCounter.textContent = `${index + 1} / ${totalSlides}`;
+
+                // Habilitar/deshabilitar botones de navegación
+                prevButton.disabled = (index === 0);
+                nextButton.disabled = (index === totalSlides - 1);
+            }
+
+            /**
+             * Muestra la siguiente diapositiva.
+             */
+            function showNextSlide() {
+                if (currentSlideIndex < totalSlides - 1) {
+                    showSlide(currentSlideIndex + 1);
+                }
+            }
+
+            /**
+             * Muestra la diapositiva anterior.
+             */
+            function showPrevSlide() {
+                if (currentSlideIndex > 0) {
+                    showSlide(currentSlideIndex - 1);
+                }
+            }
+
+            // --- Event Listeners ---
+
+            // Clicks en los botones
+            nextButton.addEventListener('click', showNextSlide);
+            prevButton.addEventListener('click', showPrevSlide);
+
+            // Navegación con teclas de flecha
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'ArrowRight') {
+                    showNextSlide();
+                } else if (event.key === 'ArrowLeft') {
+                    showPrevSlide();
+                }
+            });
+
+            // Mostrar la primera diapositiva al cargar
+            showSlide(0);
+        });
+    </script>
+
+</body>
+</html>

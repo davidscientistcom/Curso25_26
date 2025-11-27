@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diseño de Casos de Prueba en Python</title>
+    <!-- Importar fuentes de Google: Urbanist para texto, Source Code Pro para código -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Importar Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* 1. CONFIGURACIÓN GENERAL */
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: #e2e8f0; /* Fondo gris claro */
+            font-family: 'Urbanist', sans-serif;
+            scroll-behavior: smooth; /* Desplazamiento suave */
+        }
+
+        body {
+            display: grid; /* Cambiado a grid para centrar todo */
+            place-items: center;
+            min-height: 100vh;
+            padding: 20px; /* Padding general */
+            gap: 20px; /* Espacio entre la slide y la navegación */
+        }
+        
+        /* Contenedor principal para la slide */
+        .slide-wrapper {
+            width: 100%;
+            max-width: 1280px; /* Ancho máximo de la diapositiva */
+            height: 720px; /* Altura fija (relación 16:9) */
+            position: relative; /* Para que las slides se superpongan */
+            border-radius: 12px;
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.25);
+            overflow: hidden; /* Oculta slides que no están activas */
+        }
+
+        .slide-container {
+            width: 100%;
+            height: 100%;
+            background-color: #1a1a1a; /* Fondo oscuro principal */
+            
+            /* Oculto por defecto, JS lo controla */
+            display: none; 
+            
+            flex-direction: column;
+            justify-content: flex-start; /* Alineación superior */
+            align-items: flex-start; /* Alineación izquierda */
+            padding: 60px 80px;
+            color: #f0f0f0; /* Color de texto principal */
+            
+            /* Posición absoluta para apilarlas */
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Clase para mostrar la diapositiva activa */
+        .active-slide {
+            display: flex; /* Mostrar la diapositiva activa */
+        }
+
+        /* 2. TIPOGRAFÍA CONSISTENTE */
+        .slide-container h1,
+        .slide-container h2,
+        .slide-container h3 {
+            font-family: 'Urbanist', sans-serif;
+            font-weight: 700;
+            margin: 0;
+            color: #ffffff; /* Títulos en blanco brillante */
+        }
+
+        .slide-container p,
+        .slide-container li,
+        .slide-container .subtitle,
+        .slide-container th,
+        .slide-container td {
+            font-family: 'Urbanist', sans-serif;
+            font-weight: 400;
+            color: #f0f0f0; /* Texto del cuerpo */
+            font-size: 20px; 
+            line-height: 1.6;
+        }
+        
+        .slide-container h1 {
+            font-size: 64px;
+            line-height: 1.1;
+        }
+
+        .slide-container .slide-title { /* H2 */
+            font-size: 48px;
+            margin-bottom: 30px;
+            width: 100%;
+            text-align: left;
+        }
+
+        .slide-container h3 {
+            font-size: 24px;
+            color: #39ff14; /* Acento verde neón */
+            margin-bottom: 15px;
+        }
+
+        .slide-container .subtitle {
+            font-size: 26px;
+            margin-top: 20px;
+            opacity: 0.9;
+        }
+        
+        .slide-container ul {
+            padding-left: 25px;
+            margin: 0;
+        }
+        
+        .slide-container li {
+            margin-bottom: 10px;
+        }
+        
+        .slide-container li::marker {
+            color: #39ff14;
+        }
+        
+        .slide-container .highlight {
+             color: #39ff14;
+             font-weight: 700;
+        }
+        
+        .slide-container .danger-highlight {
+             color: #ff6161;
+             font-weight: 700;
+        }
+
+        /* 3. ESTILOS DE CÓDIGO */
+        .slide-container pre {
+            background-color: #252525; /* Fondo ligeramente más claro para código */
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 16px;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Scroll si es necesario */
+            white-space: pre; /* Mantiene el formato */
+            font-family: 'Source Code Pro', monospace;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+
+        .slide-container code {
+            font-family: 'Source Code Pro', monospace;
+            color: #e0e0e0;
+        }
+        
+        .slide-container p > code, .slide-container li > code {
+            font-size: 18px;
+            background-color: #333;
+            padding: 3px 6px;
+            border-radius: 4px;
+            color: #f0f0f0;
+        }
+
+        .slide-container pre .comment { color: #999999; }
+        .slide-container pre .keyword { color: #f92672; }
+        .slide-container pre .string { color: #a6e22e; }
+        .slide-container pre .function { color: #66d9ef; }
+        .slide-container pre .number { color: #ae81ff; }
+        .slide-container pre .class { color: #e6db74; }
+
+
+        /* 4. DEFINICIONES DE DISEÑO (LAYOUTS) */
+        
+        .slide-container .content-area {
+            width: 100%;
+            flex-grow: 1; /* Ocupa el espacio restante */
+            overflow: hidden; /* Previene desbordamiento */
+            display: flex; /* Para layouts internos */
+            flex-direction: column;
+        }
+        
+        /* Layout: Title_Slide */
+        .title-layout {
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .title-layout h1 {
+            text-align: center;
+        }
+        .title-layout .subtitle {
+            max-width: 800px;
+        }
+        
+        /* Layout: Two_Column (Genérico) */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            width: 100%;
+            height: 100%;
+            align-items: stretch;
+        }
+        
+        .two-column > div {
+             overflow-y: auto; /* Scroll si el contenido es largo */
+             padding-right: 15px; /* Espacio para scrollbar */
+             height: 100%;
+        }
+        
+        .two-column > div h3 {
+             margin-top: 0;
+        }
+        
+        /* Layout: Q&A */
+        .qa-layout {
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .qa-layout h2 {
+            font-size: 80px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .qa-layout p {
+            font-size: 28px;
+        }
+        
+        /* 5. NAVEGACIÓN */
+        .navigation-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: -20px; /* Lo sube al espacio del gap del body */
+            z-index: 10;
+        }
+
+        .nav-button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-button:hover {
+            background-color: #39ff14;
+            color: #1a1a1a;
+            transform: scale(1.1);
+        }
+        
+        .nav-button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+            opacity: 0.6;
+            transform: none;
+        }
+
+        #slide-counter {
+            font-size: 20px;
+            color: #1a1a1a;
+            font-weight: 700;
+            min-width: 80px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Contenedor de las diapositivas -->
+    <div class="slide-wrapper">
+
+        <!-- Slide 1: Title_Slide -->
+        <div class="slide-container" id="slide1">
+            <div class="title-layout">
+                <h1>Diseño de Casos de Prueba</h1>
+                <p class="subtitle">Testing de Caja Blanca para Tipos de Datos y Estructuras en Python</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Principios Clave -->
+        <div class="slide-container" id="slide2">
+            <h2 class="slide-title">Principios Fundamentales</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div>
+                        <h3><i class="fa-solid fa-layer-group" style="color: #39ff14;"></i> Partición de Equivalencia</h3>
+                        <p>No podemos probar *todos* los números. Agrupamos los inputs en "clases" que deberían tener el mismo comportamiento.</p>
+                        <p><strong>Ejemplo (Edad):</strong>
+                            <ul>
+                                <li>Clase 1: Negativos (Error)</li>
+                                <li>Clase 2: 0-17 (Menor de edad)</li>
+                                <li>Clase 3: 18+ (Mayor de edad)</li>
+                            </ul>
+                        </p>
+                        <p>Solo necesitamos probar <span class="highlight">un valor</span> de cada clase (ej. -5, 10, 25).</p>
+                    </div>
+                    <div>
+                        <h3><i class="fa-solid fa-arrows-to-dot" style="color: #39ff14;"></i> Análisis de Valores Límite (BVA)</h3>
+                        <p>Los bugs se esconden en los bordes. Esta técnica complementa la anterior probando los *límites* de cada clase.</p>
+                        <p><strong>Ejemplo (Edad):</strong>
+                            <ul>
+                                <li>Límites de 0-17: -1, 0, 1, 16, 17</li>
+                                <li>Límites de 18+: 17, 18, 19</li>
+                            </ul>
+                        </p>
+                        <p>Combinando, los valores clave a probar son: <span class="highlight">-1, 0, 17, 18</span>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Testing de Enteros (int) y Flotantes (float) -->
+        <div class="slide-container" id="slide3">
+            <h2 class="slide-title">Testing de Números (<code>int</code>, <code>float</code>)</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div>
+                        <pre><code><span class="keyword">def</span> <span class="function">obtener_descuento</span>(edad: int):
+    <span class="keyword">if</span> edad < <span class="number">18</span>:
+        <span class="keyword">return</span> <span class="number">0.50</span>  <span class="comment"># 50% (Joven)</span>
+    <span class="keyword">if</span> edad >= <span class="number">65</span>:
+        <span class="keyword">return</span> <span class="number">0.75</span>  <span class="comment"># 75% (Senior)</span>
+    <span class="keyword">return</span> <span class="number">0.10</span>      <span class="comment"># 10% (Adulto)</span></code></pre>
+                        
+                        <h3 style="margin-top: 20px;">Clases de Equivalencia</h3>
+                        <ul>
+                            <li>Edad < 18</li>
+                            <li>18 <= Edad < 65</li>
+                            <li>Edad >= 65</li>
+                            <li>(Inválida) Edad < 0</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Casos de Prueba (BVA)</h3>
+                        <ul>
+                            <li><strong>Negativos (Inválido):</strong>
+                                <ul>
+                                    <li><code>-1</code> <span class="danger-highlight">(Límite)</span></li>
+                                    <li><code>-10</code> (Representante)</li>
+                                </ul>
+                            </li>
+                            <li><strong>Límite Joven/Adulto:</strong>
+                                <ul>
+                                    <li><code>17</code> (Resultado: 0.50) <span class="highlight">(Límite)</span></li>
+                                    <li><code>18</code> (Resultado: 0.10) <span class="highlight">(Límite)</span></li>
+                                </ul>
+                            </li>
+                             <li><strong>Límite Adulto/Senior:</strong>
+                                <ul>
+                                    <li><code>64</code> (Resultado: 0.10) <span class="highlight">(Límite)</span></li>
+                                    <li><code>65</code> (Resultado: 0.75) <span class="highlight">(Límite)</span></li>
+                                </ul>
+                            </li>
+                            <li><strong>Robustez (Tipos):</strong>
+                                <ul>
+                                    <li><code>"veinte"</code> (TypeError)</li>
+                                    <li><code>None</code> (TypeError)</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 4: Testing de Cadenas (str) -->
+        <div class="slide-container" id="slide4">
+            <h2 class="slide-title">Testing de Cadenas (<code>str</code>)</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div>
+                        <pre><code><span class="keyword">def</span> <span class="function">validar_password</span>(password: str):
+    <span class="keyword">if</span> len(password) < <span class="number">8</span>:
+        <span class="keyword">return</span> <span class="class">False</span>
+    <span class="keyword">if</span> <span class="string">"*"</span> <span class="keyword">in</span> password:
+        <span class="keyword">return</span> <span class="class">False</span>
+    <span class="keyword">return</span> <span class="class">True</span></code></pre>
+                        
+                        <h3 style="margin-top: 20px;">Clases de Equivalencia</h3>
+                        <ul>
+                            <li>Longitud < 8</li>
+                            <li>Longitud >= 8</li>
+                            <li>Contiene "*"</li>
+                            <li>No contiene "*"</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Casos de Prueba (BVA)</h3>
+                        <ul>
+                            <li><strong>Límite de Longitud:</strong>
+                                <ul>
+                                    <li><code>"1234567"</code> (len=7, False) <span class="highlight">(Límite)</span></li>
+                                    <li><code>"12345678"</code> (len=8, True) <span class="highlight">(Límite)</span></li>
+                                </ul>
+                            </li>
+                            <li><strong>Límite Vacío:</strong>
+                                <ul>
+                                    <li><code>""</code> (len=0, False) <span class="highlight">(Límite)</span></li>
+                                </ul>
+                            </li>
+                             <li><strong>Contenido Inválido:</strong>
+                                <ul>
+                                    <li><code>"password*"</code> (Falso)</li>
+                                    <li><code>"*"</code> (Falso)</li>
+                                </ul>
+                            </li>
+                            <li><strong>Válido:</strong>
+                                <ul>
+                                    <li><code>"password_valido_123"</code> (True)</li>
+                                </ul>
+                            </li>
+                            <li><strong>Robustez (Tipos):</strong>
+                                <ul>
+                                    <li><code>None</code> (TypeError)</li>
+                                    <li><code>12345678</code> (int)</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Testing de Colecciones (list, dict) -->
+        <div class="slide-container" id="slide5">
+            <h2 class="slide-title">Testing de Colecciones (<code>list</code>, <code>dict</code>)</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div>
+                        <pre><code><span class="keyword">def</span> <span class="function">calcular_promedio</span>(notas: list[float]):
+    <span class="keyword">if</span> <span class="keyword">not</span> notas:
+        <span class="keyword">return</span> <span class="number">0.0</span>
+    <span class="keyword">return</span> sum(notas) / len(notas)</code></pre>
+                        
+                        <h3 style="margin-top: 20px;">Clases de Equivalencia</h3>
+                        <ul>
+                            <li>Lista vacía</li>
+                            <li>Lista con un elemento</li>
+                            <li>Lista con N elementos</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Casos de Prueba (Límites de Cardinalidad)</h3>
+                        <ul>
+                            <li><strong>Cero (Límite):</strong>
+                                <ul>
+                                    <li><code>[]</code> (Resultado: 0.0) <span class="highlight">(Límite)</span></li>
+                                </ul>
+                            </li>
+                            <li><strong>Uno (Límite):</strong>
+                                <ul>
+                                    <li><code>[10.0]</code> (Resultado: 10.0) <span class="highlight">(Límite)</span></li>
+                                </ul>
+                            </li>
+                             <li><strong>N (Típico):</strong>
+                                <ul>
+                                    <li><code>[5.0, 7.0, 9.0]</code> (Resultado: 7.0)</li>
+                                </ul>
+                            </li>
+                            <li><strong>Robustez (Contenido):</strong>
+                                <ul>
+                                    <li><code>["hola", "mundo"]</code> (TypeError)</li>
+                                    <li><code>[10, None, 5]</code> (TypeError)</li>
+                                </ul>
+                            </li>
+                            <li><strong>Robustez (Input):</strong>
+                                <ul>
+                                    <li><code>None</code> (AttributeError por <code>len</code>)</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 6: Testing de Bucles (for, while) -->
+        <div class="slide-container" id="slide6">
+            <h2 class="slide-title">Testing de Estructuras: Bucles (<code>for</code>, <code>while</code>)</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div>
+                        <pre><code><span class="keyword">def</span> <span class="function">sumar_positivos</span>(numeros: list[int]):
+    total = <span class="number">0</span>
+    <span class="keyword">for</span> num <span class="keyword">in</span> numeros:
+        <span class="keyword">if</span> num > <span class="number">0</span>:
+            total += num
+    <span class="keyword">return</span> total</code></pre>
+                        
+                        <h3 style="margin-top: 20px;">Cobertura de Caminos del Bucle</h3>
+                        <p>La clave es probar la cardinalidad del bucle. Esto se conoce como "Basis Path Testing" (Pruebas de Caminos Base).</p>
+                    </div>
+                    <div>
+                        <h3>Casos de Prueba (0-1-N)</h3>
+                        <ul>
+                            <li><strong>Cero (0) iteraciones:</strong>
+                                <ul>
+                                    <li>Probar que el bucle <span class="danger-highlight">no se ejecuta</span>.</li>
+                                    <li>Input: <code>[]</code></li>
+                                    <li>Resultado esperado: 0</li>
+                                </ul>
+                            </li>
+                            <li><strong>Una (1) iteración:</strong>
+                                <ul>
+                                    <li>Probar que el bucle se ejecuta <span class="highlight">exactamente una vez</span>.</li>
+                                    <li>Input: <code>[5]</code> (Resultado: 5)</li>
+                                    <li>Input: <code>[-3]</code> (Resultado: 0)</li>
+                                </ul>
+                            </li>
+                             <li><strong>N iteraciones (Típico):</strong>
+                                <ul>
+                                    <li>Probar que el bucle se ejecuta <span class="highlight">múltiples veces</span>.</li>
+                                    <li>Input: <code>[10, -5, 3]</code> (Resultado: 13)</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Testing de Condicionales (if, else) -->
+        <div class="slide-container" id="slide7">
+            <h2 class="slide-title">Testing de Estructuras: Condicionales (<code>if</code>, <code>and</code>, <code>or</code>)</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div>
+                        <pre><code><span class="keyword">def</span> <span class="function">puede_entrar</span>(edad: int, es_socio: bool):
+    <span class="comment"># "Short-circuiting" (cortocircuito)</span>
+    <span class="keyword">if</span> edad >= <span class="number">18</span> <span class="keyword">or</span> es_socio:
+        <span class="keyword">return</span> <span class="class">True</span>
+    <span class="keyword">return</span> <span class="class">False</span></code></pre>
+                        
+                        <h3 style="margin-top: 20px;">Cobertura de Decisión Modificada (MCDC)</h3>
+                        <p>Necesitamos probar que *cada sub-condición* (<code>edad >= 18</code>, <code>es_socio</code>) puede afectar independientemente el resultado.</p>
+                    </div>
+                    <div>
+                        <h3>Casos de Prueba (MCDC)</h3>
+                        <p>Buscamos los casos mínimos para probar todas las ramas.</p>
+                        <ul>
+                            <li><strong>Caso 1 (T, F):</strong> <code>edad = 20</code>, <code>es_socio = False</code>
+                                <ul>
+                                    <li>(T or F) -> Resultado: True</li>
+                                </ul>
+                            </li>
+                            <li><strong>Caso 2 (F, T):</strong> <code>edad = 16</code>, <code>es_socio = True</code>
+                                <ul>
+                                    <li>(F or T) -> Resultado: True</li>
+                                </ul>
+                            </li>
+                             <li><strong>Caso 3 (F, F):</strong> <code>edad = 16</code>, <code>es_socio = False</code>
+                                <ul>
+                                    <li>(F or F) -> Resultado: False</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p>Nota: <strong>(T, T)</strong> no es estrictamente necesario, ya que el cortocircuito del <code>or</code> hace que el segundo <code>True</code> sea irrelevante si el primero ya lo es.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Testing de Lambdas y Funciones -->
+        <div class="slide-container" id="slide8">
+            <h2 class="slide-title">Testing de <code>lambda</code> y Funciones de Orden Superior</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div>
+                        <pre><code><span class="comment"># La 'Callable' es una función o lambda</span>
+<span class="keyword">from</span> typing <span class="keyword">import</span> Callable
+
+<span class="keyword">def</span> <span class="function">procesar_items</span>(
+    items: list,
+    filtro: Callable[[any], bool]
+):
+    <span class="keyword">return</span> [item <span class="keyword">for</span> item <span class="keyword">in</span> items <span class="keyword">if</span> filtro(item)]</code></pre>
+                    </div>
+                    <div>
+                        <h3>Casos de Prueba (del Filtro)</h3>
+                        <p>No probamos la <code>lambda</code>, probamos la función <code>procesar_items</code> dándole diferentes <code>lambdas</code> que simulan los límites:</p>
+                        <ul>
+                            <li><strong>Filtra Todo (Límite):</strong>
+                                <ul>
+                                    <li><code>procesar_items([1, 2, 3], <span class="keyword">lambda</span> x: <span class="class">False</span>)</code></li>
+                                    <li>Resultado: <code>[]</code></li>
+                                </ul>
+                            </li>
+                            <li><strong>No Filtra Nada (Límite):</strong>
+                                <ul>
+                                    <li><code>procesar_items([1, 2, 3], <span class="keyword">lambda</span> x: <span class="class">True</span>)</code></li>
+                                    <li>Resultado: <code>[1, 2, 3]</code></li>
+                                </ul>
+                            </li>
+                             <li><strong>Filtro Normal:</strong>
+                                <ul>
+                                    <li><code>procesar_items([1, 5, 10], <span class="keyword">lambda</span> x: x > 3)</code></li>
+                                    <li>Resultado: <code>[5, 10]</code></li>
+                                </ul>
+                            </li>
+                            <li><strong>Robustez (Excepción):</strong>
+                                <ul>
+                                    <li><code>procesar_items(["a", 1], <span class="keyword">lambda</span> x: x > 0)</code></li>
+                                    <li>(Debería lanzar un <code>TypeError</code>, y debemos probarlo con <code>pytest.raises</code>)</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 9: Resumen -->
+        <div class="slide-container" id="slide9">
+            <h2 class="slide-title">Resumen: Su Checklist de Pruebas</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div>
+                        <h3>Por Tipo de Dato</h3>
+                        <ul>
+                            <li><strong>Números (int, float):</strong>
+                                <ul>
+                                    <li>Cero (0)</li>
+                                    <li>Positivo (ej. 10)</li>
+                                    <li>Negativo (ej. -10)</li>
+                                    <li>Valores Límite (ej. 17, 18)</li>
+                                    <li><code>None</code></li>
+                                </ul>
+                            </li>
+                            <li><strong>Cadenas (str):</strong>
+                                <ul>
+                                    <li>Vacía (<code>""</code>)</li>
+                                    <li>Un carácter (si aplica)</li>
+                                    <li>Límite de longitud (min/max)</li>
+                                    <li>Caracteres especiales / Unicode</li>
+                                    <li><code>None</code></li>
+                                </ul>
+                            </li>
+                            <li><strong>Colecciones (list, dict):</strong>
+                                <ul>
+                                    <li>Vacía (<code>[]</code>, <code>{}</code>)</li>
+                                    <li>Un elemento</li>
+                                    <li>N elementos</li>
+                                    <li><code>None</code> (como input)</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Por Estructura de Control</h3>
+                        <ul>
+                            <li><strong>Bucles (for, while):</strong>
+                                <ul>
+                                    <li><strong>0</strong> iteraciones (no entra al bucle)</li>
+                                    <li><strong>1</strong> iteración</li>
+                                    <li><strong>N</strong> iteraciones (típico)</li>
+                                </ul>
+                            </li>
+                            <li><strong>Condicionales (if, and, or):</strong>
+                                <ul>
+                                    <li>Probar cada camino <code>True</code> y <code>False</code>.</li>
+                                    <li>Probar cada sub-condición (MCDC).</li>
+                                </ul>
+                            </li>
+                            <li><strong>Excepciones (try/except):</strong>
+                                <ul>
+                                    <li>Probar el camino <code>try</code> (no hay error).</li>
+                                    <li>Probar el camino <code>except</code> (forzar el error).</li>
+                                    <li>Probar el camino <code>finally</code> (en ambos casos).</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 10: Q&A -->
+        <div class="slide-container" id="slide10">
+            <div class="qa-layout">
+                <h2>¿Preguntas?</h2>
+                <p>El diseño de casos de prueba es la habilidad clave del testing.</p>
+            </div>
+        </div>
+        
+    </div> <!-- Fin de .slide-wrapper -->
+    
+    <!-- Controles de Navegación -->
+    <div class="navigation-controls">
+        <button id="prev-button" class="nav-button" title="Anterior">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <span id="slide-counter">1 / 10</span>
+        <button id="next-button" class="nav-button" title="Siguiente">
+            <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Seleccionar todos los contenedores de diapositivas
+            const slides = document.querySelectorAll('.slide-container');
+            const totalSlides = slides.length;
+            let currentSlideIndex = 0;
+
+            // Elementos de la UI de navegación
+            const prevButton = document.getElementById('prev-button');
+            const nextButton = document.getElementById('next-button');
+            const slideCounter = document.getElementById('slide-counter');
+
+            /**
+             * Muestra la diapositiva en el índice dado y actualiza la UI.
+             * @param {number} index - El índice de la diapositiva a mostrar.
+             */
+            function showSlide(index) {
+                // Ocultar todas las diapositivas
+                slides.forEach((slide) => {
+                    slide.classList.remove('active-slide');
+                });
+
+                // Mostrar la diapositiva actual
+                if (slides[index]) {
+                    slides[index].classList.add('active-slide');
+                    currentSlideIndex = index;
+                }
+
+                // Actualizar el contador
+                slideCounter.textContent = `${index + 1} / ${totalSlides}`;
+
+                // Habilitar/deshabilitar botones de navegación
+                prevButton.disabled = (index === 0);
+                nextButton.disabled = (index === totalSlides - 1);
+            }
+
+            /**
+             * Muestra la siguiente diapositiva.
+             */
+            function showNextSlide() {
+                if (currentSlideIndex < totalSlides - 1) {
+                    showSlide(currentSlideIndex + 1);
+                }
+            }
+
+            /**
+             * Muestra la diapositiva anterior.
+             */
+            function showPrevSlide() {
+                if (currentSlideIndex > 0) {
+                    showSlide(currentSlideIndex - 1);
+                }
+            }
+
+            // --- Event Listeners ---
+
+            // Clicks en los botones
+            nextButton.addEventListener('click', showNextSlide);
+            prevButton.addEventListener('click', showPrevSlide);
+
+            // Navegación con teclas de flecha
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'ArrowRight') {
+                    showNextSlide();
+                } else if (event.key === 'ArrowLeft') {
+                    showPrevSlide();
+                }
+            });
+
+            // Mostrar la primera diapositiva al cargar
+            showSlide(0);
+        });
+    </script>
+
+</body>
+</html>

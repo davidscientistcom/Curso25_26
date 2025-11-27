@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing de Software en Python</title>
+    <!-- Importar fuentes de Google: Urbanist para texto, Source Code Pro para código -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Importar Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* 1. CONFIGURACIÓN GENERAL */
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: #e2e8f0; /* Fondo gris claro */
+            font-family: 'Urbanist', sans-serif;
+            scroll-behavior: smooth; /* Desplazamiento suave */
+        }
+
+        body {
+            display: grid; /* Cambiado a grid para centrar todo */
+            place-items: center;
+            min-height: 100vh;
+            padding: 20px; /* Padding general */
+            gap: 20px; /* Espacio entre la slide y la navegación */
+        }
+        
+        /* Contenedor principal para la slide */
+        .slide-wrapper {
+            width: 100%;
+            max-width: 1280px; /* Ancho máximo de la diapositiva */
+            height: 720px; /* Altura fija (relación 16:9) */
+            position: relative; /* Para que las slides se superpongan */
+            border-radius: 12px;
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.25);
+            overflow: hidden; /* Oculta slides que no están activas */
+        }
+
+        .slide-container {
+            width: 100%;
+            height: 100%;
+            background-color: #1a1a1a; /* Fondo oscuro principal */
+            
+            /* Oculto por defecto, JS lo controla */
+            display: none; 
+            
+            flex-direction: column;
+            justify-content: flex-start; /* Alineación superior */
+            align-items: flex-start; /* Alineación izquierda */
+            padding: 60px 80px;
+            color: #f0f0f0; /* Color de texto principal */
+            
+            /* Posición absoluta para apilarlas */
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Clase para mostrar la diapositiva activa */
+        .active-slide {
+            display: flex; /* Mostrar la diapositiva activa */
+        }
+
+        /* 2. TIPOGRAFÍA CONSISTENTE */
+        .slide-container h1,
+        .slide-container h2,
+        .slide-container h3 {
+            font-family: 'Urbanist', sans-serif;
+            font-weight: 700;
+            margin: 0;
+            color: #ffffff; /* Títulos en blanco brillante */
+        }
+
+        .slide-container p,
+        .slide-container li,
+        .slide-container .subtitle,
+        .slide-container th,
+        .slide-container td {
+            font-family: 'Urbanist', sans-serif;
+            font-weight: 400;
+            color: #f0f0f0; /* Texto del cuerpo */
+            font-size: 20px; 
+            line-height: 1.6;
+        }
+
+        /* Estilo específico para KaTeX */
+        .katex {
+            font-size: 1.2em; /* Hacer la matemática un poco más grande */
+            font-family: 'Urbanist', sans-serif;
+        }
+        
+        .slide-container .katex-display {
+             margin: 20px 0;
+             display: block;
+        }
+
+        .slide-container h1 {
+            font-size: 64px;
+            line-height: 1.1;
+        }
+
+        .slide-container .slide-title { /* H2 */
+            font-size: 48px;
+            margin-bottom: 30px;
+            width: 100%;
+            text-align: left;
+        }
+
+        .slide-container h3 {
+            font-size: 24px;
+            color: #39ff14; /* Acento verde neón */
+            margin-bottom: 15px;
+        }
+
+        .slide-container .subtitle {
+            font-size: 26px;
+            margin-top: 20px;
+            opacity: 0.9;
+        }
+        
+        .slide-container ul {
+            padding-left: 25px;
+            margin: 0;
+        }
+        
+        .slide-container li {
+            margin-bottom: 10px;
+        }
+
+        /* 3. ESTILOS DE CÓDIGO */
+        .slide-container pre {
+            background-color: #252525; /* Fondo ligeramente más claro para código */
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 16px;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Scroll si es necesario */
+            white-space: pre; /* Mantiene el formato */
+            font-family: 'Source Code Pro', monospace;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+
+        .slide-container code {
+            font-family: 'Source Code Pro', monospace;
+            color: #e0e0e0;
+        }
+        
+        .slide-container p > code, .slide-container li > code {
+            font-size: 18px;
+            background-color: #333;
+            padding: 3px 6px;
+            border-radius: 4px;
+            color: #f0f0f0;
+        }
+
+        .slide-container pre .comment { color: #999999; }
+        .slide-container pre .keyword { color: #f92672; }
+        .slide-container pre .string { color: #a6e22e; }
+        .slide-container pre .function { color: #66d9ef; }
+        .slide-container pre .number { color: #ae81ff; }
+
+
+        /* 4. DEFINICIONES DE DISEÑO (LAYOUTS) */
+        
+        .slide-container .content-area {
+            width: 100%;
+            flex-grow: 1; /* Ocupa el espacio restante */
+            overflow: hidden; /* Previene desbordamiento */
+        }
+        
+        /* Layout: Title_Slide */
+        .title-layout {
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .title-layout h1 {
+            text-align: center;
+        }
+        .title-layout .subtitle {
+            max-width: 800px;
+        }
+
+        /* Layout: Section_Title */
+        .section-title-layout {
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .section-title-layout h2 {
+            font-size: 60px;
+            text-align: center;
+            color: #39ff14; /* Acento verde */
+        }
+        .section-title-layout p {
+            font-size: 26px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Layout: Tiled_Text_With_Icons (Tiled Content) */
+        .tiled-content {
+            display: flex;
+            gap: 30px;
+            width: 100%;
+            height: 100%;
+            align-items: stretch;
+        }
+
+        .tile {
+            flex: 1;
+            background-color: #222;
+            border: 1px solid #444;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: left;
+            overflow-y: auto; /* Scroll si es necesario */
+        }
+        
+        .tile .icon {
+            font-size: 40px;
+            color: #39ff14;
+            margin-bottom: 20px;
+        }
+        
+        .tile h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 26px;
+        }
+        
+        .tile p, .tile li {
+            font-size: 18px;
+            line-height: 1.5;
+            color: #ccc;
+        }
+        
+        .tile ul {
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+        
+        /* Layout: Styled_Bullet_Points */
+        .bullet-list {
+            width: 100%;
+            padding-left: 40px;
+        }
+
+        .bullet-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .bullet-list li {
+            position: relative;
+            padding-left: 45px;
+            font-size: 22px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .bullet-list li::before {
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            content: "\f0a9"; /* fa-hand-point-right */
+            color: #39ff14;
+            font-size: 24px;
+            position: absolute;
+            left: 0;
+            top: 5px;
+        }
+        
+        .bullet-list li strong {
+            color: #fff;
+            font-weight: 700;
+        }
+        
+        /* Layout: Two_Column (Genérico) */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            width: 100%;
+            height: 100%;
+            align-items: stretch;
+        }
+        
+        .two-column > div {
+             overflow-y: auto; /* Scroll si el contenido es largo */
+             padding-right: 15px; /* Espacio para scrollbar */
+             height: 100%;
+        }
+
+        /* Layout: Q&A */
+        .qa-layout {
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .qa-layout h2 {
+            font-size: 80px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .qa-layout p {
+            font-size: 28px;
+        }
+        
+        /* 5. NAVEGACIÓN */
+        .navigation-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: -20px; /* Lo sube al espacio del gap del body */
+            z-index: 10;
+        }
+
+        .nav-button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-button:hover {
+            background-color: #39ff14;
+            color: #1a1a1a;
+            transform: scale(1.1);
+        }
+        
+        .nav-button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+            opacity: 0.6;
+            transform: none;
+        }
+
+        #slide-counter {
+            font-size: 20px;
+            color: #1a1a1a;
+            font-weight: 700;
+            min-width: 80px;
+            text-align: center;
+        }
+    </style>
+    <!-- KaTeX para renderizar matemáticas (LaTeX) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" xintegrity="sha384-sNKyhmhE3GEUkLTd09aP8GT/yn2/kWZS7M/VisYKAIRyfzWerQSIwMroRKMWdist" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" xintegrity="sha384-hIoBPJpTadxHRDO8tQvNhP1LcxNxshLblQdeT5BTsP/C1cQ0k4L+4B1vQvOihJJg" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" xintegrity="sha384-4wGPoOPuWUp7zgG/M+E/Q1kRj+UI5G2iBNaQsnGjM/QGPlsadjiEuTj6M/xVz36f" crossorigin="anonymous"></script>
+
+</head>
+<body>
+    
+    <!-- Contenedor de las diapositivas -->
+    <div class="slide-wrapper">
+
+        <!-- Slide 1: Title_Slide -->
+        <div class="slide-container" id="slide1">
+            <div class="title-layout">
+                <h1>Testing de Software en Python</h1>
+                <p class="subtitle">De la Teoría a la Práctica: Cobertura, Cohesión y Acoplamiento.</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Section_Title -->
+        <div class="slide-container" id="slide2">
+            <div class="section-title-layout">
+                <h2 style="color: #fff;">¿Por Qué Probar el Código?</h2>
+                <p>Antes de escribir pruebas, debemos entender qué hace que el código sea "probable" y fácil de mantener.</p>
+            </div>
+        </div>
+
+        <!-- Slide 3: Tiled_Text_With_Icons (como two-column tiled) -->
+        <div class="slide-container" id="slide3">
+            <h2 class="slide-title">Métrica Clave: Cobertura de Código</h2>
+            <div class="content-area">
+                <div class="tiled-content">
+                    <div class="tile">
+                        <h3>¿Qué es la Cobertura?</h3>
+                        <p>Es una métrica (en %) que mide cuántas líneas de tu código fuente se ejecutan durante la batería de pruebas.</p>
+                        <p>Una alta cobertura (>80%) no garantiza código libre de errores, pero una baja cobertura (<50%) <strong>sí garantiza</strong> que tienes partes del código sin probar.</p>
+                    </div>
+                    <div class="tile">
+                        <h3>Herramienta: <code>coverage.py</code></h3>
+                        <p>Es la herramienta estándar en Python para medir la cobertura.</p>
+                        <pre><code><span class="comment"># Instalar</span>
+$ pip install coverage
+
+<span class="comment"># Ejecutar (en lugar de 'pytest')</span>
+$ coverage run -m pytest
+
+<span class="comment"># Ver reporte en terminal</span>
+$ coverage report -m
+
+<span class="comment"># Ver reporte en HTML</span>
+$ coverage html</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Tiled_Text_With_Icons (Cohesión) -->
+        <div class="slide-container" id="slide4">
+            <h2 class="slide-title">Principio de Ingeniería: Cohesión</h2>
+            <div class="content-area">
+                <p style="margin-bottom: 20px;">Mide qué tan enfocada está una unidad de código (módulo, clase, función) en una sola tarea.</p>
+                <div class="tiled-content">
+                    <div class="tile" style="border-color: #39ff14;">
+                        <h3><i class="fa-solid fa-check" style="color: #39ff14;"></i> Alta Cohesión (¡Bueno!)</h3>
+                        <p>Una función que <strong>solo</strong> calcula un promedio.</p>
+                        <p>Una clase <code>Usuario</code> que <strong>solo</strong> maneja datos del usuario.</p>
+                    </div>
+                    <div class="tile" style="border-color: #ff6161;">
+                        <h3><i class="fa-solid fa-times" style="color: #ff6161;"></i> Baja Cohesión (¡Malo!)</h3>
+                        <p>Una función que calcula un promedio, <strong>Y</strong> escribe en un archivo <strong>Y</strong> envía un email.</p>
+                    </div>
+                </div>
+                <p style="margin-top: 20px; font-size: 24px; text-align: center; width: 100%;"><strong>Objetivo:</strong> Alta Cohesión. Cada pieza de código debe hacer UNA sola cosa bien.</p>
+            </div>
+        </div>
+
+        <!-- Slide 5: Tiled_Text_With_Icons (Acoplamiento) -->
+        <div class="slide-container" id="slide5">
+            <h2 class="slide-title">Principio de Ingeniería: Acoplamiento</h2>
+            <div class="content-area">
+                <p style="margin-bottom: 20px;">Mide el grado de dependencia entre dos o más unidades de código.</p>
+                <div class="tiled-content">
+                    <div class="tile" style="border-color: #ff6161;">
+                        <h3><i class="fa-solid fa-times" style="color: #ff6161;"></i> Alto Acoplamiento (¡Malo!)</h3>
+                        <p>El Módulo A conoce los detalles internos del Módulo B. Si cambias B, rompes A.</p>
+                        <p>Son difíciles de probar por separado.</p>
+                    </div>
+                    <div class="tile" style="border-color: #39ff14;">
+                        <h3><i class="fa-solid fa-check" style="color: #39ff14;"></i> Bajo Acoplamiento (¡Bueno!)</h3>
+                        <p>Los módulos se comunican a través de interfaces simples (parámetros y retornos).</p>
+                        <p>Puedes probar A "mockeando" (simulando) B.</p>
+                    </div>
+                </div>
+                <p style="margin-top: 20px; font-size: 24px; text-align: center; width: 100%;"><strong>Objetivo:</strong> Bajo Acoplamiento. El código debe ser modular e independiente.</p>
+            </div>
+        </div>
+        
+        <!-- Slide 6: Section_Title -->
+        <div class="slide-container" id="slide6">
+            <div class="section-title-layout">
+                <h2 style="color: #ff6161;">Caso Práctico: El Código "Malo"</h2>
+                <p>Veamos un código que es difícil de probar debido a su baja cohesión y alto acoplamiento.</p>
+            </div>
+        </div>
+
+        <!-- Slide 7: Image_Right_Text_Left (Código Malo) -->
+        <div class="slide-container" id="slide7">
+            <h2 class="slide-title">Ejemplo: Código No Testeable</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div>
+                        <h3><code>report_processor.py</code> (Malo)</h3>
+                        <p>Este script hace todo a la vez:</p>
+                        <ol>
+                            <li>Se conecta directo a la BD (¡Acoplamiento!)</li>
+                            <li>Tiene lógica de negocio (filtrado).</li>
+                            <li>Formatea los datos.</li>
+                            <li>Escribe en un archivo.</li>
+                        </ol>
+                        <h3 style="color: #ff6161; margin-top: 20px;">Problemas:</h3>
+                        <ul>
+                            <li>¿Cómo lo pruebas sin una BD real?</li>
+                            <li>¿Cómo pruebas el formato sin la lógica?</li>
+                            <li style="font-weight: 700;">(Baja Cohesión y Alto Acoplamiento)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <pre><code><span class="comment"># report_processor.py (Malo)</span>
+<span class="keyword">import</span> sqlite3
+
+<span class="keyword">def</span> <span class="function">process_user_report</span>(min_age):
+
+    <span class="comment"># 1. Acoplamiento alto (BD)</span>
+    connection = sqlite3.connect(<span class="string">"prod.db"</span>)
+    cursor = connection.cursor()
+
+    <span class="comment"># 2. Lógica de negocio</span>
+    cursor.execute(
+        <span class="string">"SELECT name, email, age FROM users"</span>
+    )
+
+    final_report = <span class="string">"USER REPORT\n==========\n"</span>
+
+    <span class="keyword">for</span> name, email, age <span class="keyword">in</span> cursor.fetchall():
+
+        <span class="comment"># 3. Más lógica</span>
+        <span class="keyword">if</span> age >= min_age:
+
+            <span class="comment"># 4. Formateo (Baja Cohesión)</span>
+            final_report += <span class="string">f"User: {name.upper()} ({email})\n"</span>
+    
+    <span class="comment"># 5. Efecto secundario</span>
+    <span class="keyword">with</span> open(<span class="string">"report.txt"</span>, <span class="string">"w"</span>) <span class="keyword">as</span> f:
+        f.write(final_report)</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 8: Tiled_Text_With_Icons (Complejidad) -->
+        <div class="slide-container" id="slide8">
+            <h2 class="slide-title">Métrica de Complejidad Ciclomática</h2>
+            <div class="content-area">
+                <div class="tiled-content">
+                    <div class="tile">
+                        <h3>¿Qué es?</h3>
+                        <p>Mide el número de "caminos" lógicos independientes en una función.</p>
+                        <p>Se calcula como:</p>
+                        <!-- Fórmula en LaTeX renderizada por KaTeX -->
+                        <div id="katex-formula-1"></div>
+                        <p>Donde <strong>P</strong> es el número de puntos de decisión (<code>if</code>, <code>while</code>, <code>for</code>, <code>and</code>, <code>or</code>).</p>
+                        <h3>Herramienta: <code>radon</code></h3>
+                        <pre><code>$ pip install radon
+$ radon cc report_processor.py -a
+<span class="comment">report_processor.py</span>
+    F 4 process_user_report: 3 (B)</code></pre>
+                    </div>
+                    <div class="tile">
+                        <h3>Pruebas de Caja Blanca</h3>
+                        <p>La complejidad <strong>(3)</strong> nos dice que necesitamos <strong>3 casos de prueba</strong> para una cobertura de caminos (Basis Path Testing).</p>
+                        <p><strong>Caminos a probar:</strong></p>
+                        <ol>
+                            <li>El <code>for</code> no se ejecuta (0 usuarios).</li>
+                            <li>El <code>for</code> se ejecuta, pero el <code>if</code> es Falso (usuarios &lt; min_age).</li>
+                            <li>El <code>for</code> se ejecuta, y el <code>if</code> es Verdadero (usuarios &gt;= min_age).</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Section_Title -->
+        <div class="slide-container" id="slide9">
+            <div class="section-title-layout">
+                <h2 style="color: #39ff14;">Refactorización: El Código "Bueno"</h2>
+                <p>Aplicamos técnicas para aumentar la cohesión y reducir el acoplamiento.</p>
+            </div>
+        </div>
+
+        <!-- Slide 10: Styled_Bullet_Points -->
+        <div class="slide-container" id="slide10">
+            <h2 class="slide-title">Técnicas de Refactorización Aplicadas</h2>
+            <div class="content-area">
+                <div class="bullet-list">
+                    <ul>
+                        <li>
+                            <strong>Principio de Responsabilidad Única (Alta Cohesión):</strong> Separamos la lógica en funciones pequeñas y enfocadas (obtener datos, filtrar datos, formatear datos).
+                        </li>
+                        <li>
+                            <strong>Inyección de Dependencias (Bajo Acoplamiento):</strong> En lugar de *crear* la conexión a la BD, la *recibimos* como parámetro (<code>db_cursor</code>).
+                        </li>
+                         <li>
+                            <strong>Evitar Efectos Secundarios:</strong> La función principal *retorna* el reporte en lugar de escribirlo en un archivo. Otra parte del sistema se encargará de guardarlo.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Image_Right_Text_Left (Código Bueno) -->
+        <div class="slide-container" id="slide11">
+            <h2 class="slide-title">Ejemplo: Código Testeable</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div>
+                        <h3><code>report_processor_v2.py</code> (Bueno)</h3>
+                        <p>¡Ahora podemos probar cada parte por separado!</p>
+                        <ol>
+                            <li>Probar <code>_format_report_line</code> aisladamente.</li>
+                            <li>Probar <code>process_report</code> pasando una lista falsa (mock).</li>
+                            <li>Probar <code>fetch_users</code> pasando un cursor falso.</li>
+                        </ol>
+                        <p style="font-weight: 700; color: #39ff14; margin-top: 20px;">¡El código ahora es testeable!</p>
+                        <p>La complejidad ciclomática de cada función es ahora 1 o 2, mucho más simple.</p>
+                    </div>
+                    <div>
+                        <pre><code><span class="comment"># report_processor_v2.py (Bueno)</span>
+
+<span class="comment"># 1. Responsabilidad Única (Formato)</span>
+<span class="keyword">def</span> <span class="function">_format_report_line</span>(user_data):
+    name, email = user_data[<span class="string">'name'</span>], user_data[<span class="string">'email'</span>]
+    <span class="keyword">return</span> <span class="string">f"User: {name.upper()} ({email})\n"</span>
+
+<span class="comment"># 2. Responsabilidad Única (Lógica)</span>
+<span class="comment"># 3. Inyección de Dependencias (users)</span>
+<span class="keyword">def</span> <span class="function">process_report</span>(users: list, min_age: int):
+    report_lines = []
+    <span class="keyword">for</span> user <span class="keyword">in</span> users:
+        <span class="keyword">if</span> user[<span class="string">'age'</span>] >= min_age:
+            report_lines.append(
+                _format_report_line(user)
+            )
+    
+    <span class="keyword">if not</span> report_lines:
+        <span class="keyword">return</span> <span class="string">"No users found."</span>
+    
+    <span class="keyword">return</span> <span class="string">""</span>.join(report_lines)
+
+<span class="comment"># 4. Responsabilidad Única (Datos)</span>
+<span class="comment"># 5. Inyección de Dependencias (cursor)</span>
+<span class="keyword">def</span> <span class="function">fetch_users</span>(db_cursor):
+    db_cursor.execute(
+        <span class="string">"SELECT name, email, age FROM users"</span>
+    )
+    <span class="comment"># Devuelve datos crudos, no procesa</span>
+    <span class="keyword">return</span> [
+        {<span class="string">"name"</span>: n, <span class="string">"email"</span>: e, <span class="string">"age"</span>: a}
+        <span class="keyword">for</span> n, e, a <span class="keyword">in</span> db_cursor.fetchall()
+    ]</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Q&A -->
+        <div class="slide-container" id="slide12">
+            <div class="qa-layout">
+                <h2>¿Preguntas?</h2>
+                <p>Gracias por su atención.</p>
+            </div>
+        </div>
+        
+    </div> <!-- Fin de .slide-wrapper -->
+    
+    <!-- Controles de Navegación -->
+    <div class="navigation-controls">
+        <button id="prev-button" class="nav-button" title="Anterior">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <span id="slide-counter">1 / 12</span>
+        <button id="next-button" class="nav-button" title="Siguiente">
+            <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Seleccionar todos los contenedores de diapositivas
+            const slides = document.querySelectorAll('.slide-container');
+            const totalSlides = slides.length;
+            let currentSlideIndex = 0;
+
+            // Elementos de la UI de navegación
+            const prevButton = document.getElementById('prev-button');
+            const nextButton = document.getElementById('next-button');
+            const slideCounter = document.getElementById('slide-counter');
+
+            /**
+             * Muestra la diapositiva en el índice dado y actualiza la UI.
+             * @param {number} index - El índice de la diapositiva a mostrar.
+             */
+            function showSlide(index) {
+                // Ocultar todas las diapositivas
+                slides.forEach((slide) => {
+                    slide.classList.remove('active-slide');
+                });
+
+                // Mostrar la diapositiva actual
+                if (slides[index]) {
+                    slides[index].classList.add('active-slide');
+                    currentSlideIndex = index;
+                }
+
+                // Actualizar el contador
+                slideCounter.textContent = `${index + 1} / ${totalSlides}`;
+
+                // Habilitar/deshabilitar botones de navegación
+                prevButton.disabled = (index === 0);
+                nextButton.disabled = (index === totalSlides - 1);
+            }
+
+            /**
+             * Muestra la siguiente diapositiva.
+             */
+            function showNextSlide() {
+                if (currentSlideIndex < totalSlides - 1) {
+                    showSlide(currentSlideIndex + 1);
+                }
+            }
+
+            /**
+             * Muestra la diapositiva anterior.
+             */
+            function showPrevSlide() {
+                if (currentSlideIndex > 0) {
+                    showSlide(currentSlideIndex - 1);
+                }
+            }
+            
+            /**
+             * Renderiza las fórmulas de KaTeX
+             */
+            function renderMath() {
+                // Renderizar fórmulas específicas por ID
+                const formula1 = document.getElementById('katex-formula-1');
+                if (formula1) {
+                    katex.render("V(G) = P + 1", formula1, {
+                        displayMode: true,
+                        throwOnError: false
+                    });
+                }
+                
+                // Opcional: renderizar todo automáticamente
+                // renderMathInElement(document.body, {
+                //     delimiters: [
+                //         {left: '$$', right: '$$', display: true},
+                //         {left: '$', right: '$', display: false}
+                //     ]
+                // });
+            }
+
+            // --- Event Listeners ---
+
+            // Clicks en los botones
+            nextButton.addEventListener('click', showNextSlide);
+            prevButton.addEventListener('click', showPrevSlide);
+
+            // Navegación con teclas de flecha
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'ArrowRight') {
+                    showNextSlide();
+                } else if (event.key === 'ArrowLeft') {
+                    showPrevSlide();
+                }
+            });
+
+            // Mostrar la primera diapositiva al cargar
+            showSlide(0);
+            
+            // Renderizar las matemáticas
+            renderMath();
+        });
+    </script>
+
+</body>
+</html>
