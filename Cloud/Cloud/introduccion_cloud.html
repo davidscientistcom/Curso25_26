@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundamentos de Cloud Computing: Arquitectura y Modelos</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --accent-color: #3b82f6;
+            --secondary-accent: #10b981;
+            --slide-bg: #2d2d2d;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Contenedor principal de slides */
+        #slide-container {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        .slide {
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            background-color: var(--slide-bg);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            opacity: 0;
+            transform: translateZ(-500px) rotateX(20deg);
+            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            display: flex;
+            flex-direction: column;
+            pointer-events: none;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateZ(0) rotateX(0deg);
+            z-index: 10;
+            pointer-events: auto;
+        }
+
+        .slide.prev {
+            transform: translateX(-120%) rotateY(-20deg);
+            opacity: 0;
+        }
+
+        .slide.next {
+            transform: translateX(120%) rotateY(20deg);
+            opacity: 0;
+        }
+
+        /* Tipografía */
+        h1 {
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--secondary-accent);
+            padding-bottom: 15px;
+            margin-top: 0;
+            font-size: 2.2rem;
+        }
+
+        h2 {
+            color: var(--secondary-accent);
+            font-size: 1.5rem;
+            margin-top: 20px;
+        }
+
+        p, li {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+
+        li::before {
+            content: "➤";
+            color: var(--accent-color);
+            font-weight: bold;
+            display: inline-block;
+            width: 1.5em;
+            margin-left: -1.5em;
+        }
+
+        .highlight {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .citation {
+            font-size: 0.7rem;
+            color: #888;
+            vertical-align: super;
+            margin-left: 5px;
+        }
+
+        /* Tablas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 1rem;
+        }
+        
+        th, td {
+            border: 1px solid #444;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #333;
+            color: var(--accent-color);
+        }
+
+        tr:nth-child(even) {
+            background-color: #383838;
+        }
+
+        /* Controles */
+        .controls {
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            background-color: #111;
+            padding: 10px;
+            z-index: 100;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #2563eb;
+        }
+
+        button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 5px;
+            background-color: var(--secondary-accent);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Clases específicas para diagramas CSS */
+        .stack-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+        }
+        .stack-column {
+            width: 30%;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #555;
+        }
+        .stack-header {
+            text-align: center;
+            padding: 10px;
+            background-color: #444;
+            font-weight: bold;
+        }
+        .layer {
+            padding: 10px;
+            text-align: center;
+            margin: 2px;
+            font-size: 0.9rem;
+        }
+        .user-managed {
+            background-color: #be185d; /* Rosa oscuro */
+            color: white;
+        }
+        .provider-managed {
+            background-color: #047857; /* Verde oscuro */
+            color: white;
+        }
+
+        code {
+            background-color: #111;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+            color: #fca5a5;
+        }
+    </style>
+</head>
+<body>
+
+<div id="slide-container">
+    <div class="slide active">
+        <h1 style="text-align: center; margin-top: 15%;">Fundamentos de Cloud Computing</h1>
+        <h2 style="text-align: center; color: #fff;">IES San Vicente 2025-2026</h2>
+        <div style="text-align: center; margin-top: 50px;">
+            <p>Usa las flechas ⬅️ ➡️ para navegar</p>
+        </div>
+    </div>
+
+    <div class="slide">
+        <h1>1. Definición Formal y Paradigma</h1>
+        <p>El Cloud Computing no es simplemente "el ordenador de otro". Es un cambio de paradigma basado en la <strong>abstracción</strong> y la <strong>orquestación</strong>.</p>
+        <ul>
+            <li><strong>Definición Técnica:</strong> Disponibilidad bajo demanda de recursos del sistema informático (almacenamiento y potencia de cómputo) sin gestión activa directa por parte del usuario[cite: 305].</li>
+            <li><strong>El "Enabler" Tecnológico:</strong> La <em>virtualización</em>. Un servidor físico se divide en múltiples servidores virtuales mediante un hipervisor, eliminando los límites físicos del hardware[cite: 308, 309].</li>
+            <li><strong>Modelo Económico:</strong> Transición de CAPEX (Gasto de Capital - Inversión inicial) a OPEX (Gasto Operativo - Pago por uso)[cite: 4, 306].</li>
+        </ul>
+        <div style="background:#333; padding:15px; border-left: 4px solid var(--accent-color);">
+            <small>Concepto Clave: El proveedor (AWS, Azure) gestiona la "física" (centros de datos, refrigeración, seguridad física), mientras el usuario consume "servicios abstractos" (instancias, buckets, lambdas).</small>
+        </div>
+    </div>
+
+    <div class="slide">
+        <h1>2. Ventajas Arquitectónicas y Operativas</h1>
+        <p>Más allá del ahorro, el Cloud ofrece capacidades imposibles en on-premise tradicional:</p>
+        <ul>
+            <li><strong>Elasticidad vs. Escalabilidad:</strong>
+                <br><em>Escalabilidad:</em> Capacidad de crecer (añadir recursos)[cite: 20].
+                <br><em>Elasticidad:</em> Capacidad de ajustar recursos automáticamente (arriba y abajo) según la demanda en tiempo real, evitando el aprovisionamiento excesivo[cite: 318].</li>
+            <li><strong>Agilidad de Despliegue (Time-to-market):</strong> Aprovisionamiento de infraestructura en minutos mediante APIs, en lugar de semanas de compra e instalación física[cite: 317].</li>
+            <li><strong>Alta Disponibilidad y Resiliencia:</strong> Redundancia geográfica automática. Si un servidor falla, el control pasa a otro sin interrupción perceptible[cite: 26, 243].</li>
+            <li><strong>Sostenibilidad:</strong> Economía de escala en eficiencia energética (PUE optimizado) superior a un CPD corporativo medio[cite: 322].</li>
+        </ul>
+    </div>
+
+    <div class="slide">
+        <h1>3. Desafíos y Consideraciones Críticas</h1>
+        <p>Como ingenieros, debemos evaluar los trade-offs:</p>
+        <ul>
+            <li><strong>Latencia de Red:</strong> Limitaciones físicas de la velocidad de la luz. Sistemas críticos en tiempo real pueden sufrir retrasos si el CPD está lejos (e.g., clínica en España, datos en Alemania)[cite: 328, 330].</li>
+            <li><strong>Dependencia del Proveedor (Vendor Lock-in):</strong> El uso de servicios propietarios (ej. AWS DynamoDB, Azure Functions) crea un acoplamiento fuerte. Migrar requiere reingeniería, no solo copiar datos[cite: 331, 333].</li>
+            <li><strong>Seguridad y Soberanía del Dato:</strong> Aunque la nube es segura, la externalización de datos sensibles (bancarios, salud) choca con regulaciones estrictas. El "Modelo de Responsabilidad Compartida" es vital[cite: 335, 336].</li>
+            <li><strong>Interrupción de Servicio:</strong> Dependencia total de la conectividad a Internet. Sin red, no hay operación[cite: 326].</li>
+        </ul>
+    </div>
+
+    <div class="slide">
+        <h1>4. Modelos de Servicio (SPI)</h1>
+        <p>La industria clasifica los servicios según el nivel de abstracción y control. No es binario, es un espectro.</p>
+        <div class="stack-container" style="font-size: 0.8rem;">
+            <div class="stack-column">
+                <div class="stack-header">IaaS (Infrastructure)</div>
+                <div class="layer user-managed">Aplicaciones</div>
+                <div class="layer user-managed">Datos</div>
+                <div class="layer user-managed">Runtime / Middleware</div>
+                <div class="layer user-managed">S. Operativo</div>
+                <div class="layer provider-managed">Virtualización</div>
+                <div class="layer provider-managed">Servidores</div>
+                <div class="layer provider-managed">Almacenamiento</div>
+                <div class="layer provider-managed">Red</div>
+            </div>
+            <div class="stack-column">
+                <div class="stack-header">PaaS (Platform)</div>
+                <div class="layer user-managed">Aplicaciones</div>
+                <div class="layer user-managed">Datos</div>
+                <div class="layer provider-managed">Runtime / Middleware</div>
+                <div class="layer provider-managed">S. Operativo</div>
+                <div class="layer provider-managed">Virtualización</div>
+                <div class="layer provider-managed">Servidores</div>
+                <div class="layer provider-managed">Almacenamiento</div>
+                <div class="layer provider-managed">Red</div>
+            </div>
+            <div class="stack-column">
+                <div class="stack-header">SaaS (Software)</div>
+                <div class="layer provider-managed">Aplicaciones</div>
+                <div class="layer provider-managed">Datos</div>
+                <div class="layer provider-managed">Runtime / Middleware</div>
+                <div class="layer provider-managed">S. Operativo</div>
+                <div class="layer provider-managed">Virtualización</div>
+                <div class="layer provider-managed">Servidores</div>
+                <div class="layer provider-managed">Almacenamiento</div>
+                <div class="layer provider-managed">Red</div>
+            </div>
+        </div>
+        <p style="text-align: center; margin-top: 10px; font-size: 0.9rem;">
+            <span style="color:#be185d">■ Gestionado por Usuario</span> | <span style="color:#047857">■ Gestionado por Proveedor</span> [cite: 48, 360]
+        </p>
+    </div>
+
+    <div class="slide">
+        <h1>4.1. IaaS: Infraestructura como Servicio</h1>
+        <p>El equivalente al CPD tradicional, pero virtualizado y alquilado.</p>
+        <ul>
+            <li><strong>Qué ofrece:</strong> Recursos "crudos" de computación (CPU, RAM), redes (VPC, Balanceadores) y almacenamiento (Bloque/Objeto)[cite: 29, 361].</li>
+            <li><strong>Nivel de Control:</strong> Máximo. El usuario administra el Sistema Operativo (parcheo, actualizaciones) hacia arriba.</li>
+            <li><strong>Caso de Uso:</strong> Migraciones "Lift and Shift" de aplicaciones legacy, control total de la configuración del kernel, bases de datos personalizadas.</li>
+            <li><strong>Ejemplos:</strong> Amazon EC2, Google Compute Engine, Azure Virtual Machines[cite: 30].</li>
+        </ul>
+    </div>
+
+    <div class="slide">
+        <h1>4.2. PaaS: Plataforma como Servicio</h1>
+        <p>Abstracción para desarrolladores. Elimina la gestión del S.O. (el "undifferentiated heavy lifting").</p>
+        <ul>
+            <li><strong>Qué ofrece:</strong> Entornos de ejecución (Runtimes para Java, Python, .NET), bases de datos gestionadas, herramientas de despliegue[cite: 31, 354].</li>
+            <li><strong>Ventaja Clave:</strong> El desarrollador solo se preocupa por el código. El proveedor gestiona parches de seguridad del OS, escalado automático y balanceo[cite: 356].</li>
+            <li><strong>Evolución Moderna:</strong> Contenedores y Orquestación (Kubernetes gestionado como EKS o AKS) se consideran el PaaS moderno[cite: 357, 358].</li>
+            <li><strong>Ejemplos:</strong> Google App Engine, AWS Elastic Beanstalk, Heroku[cite: 32].</li>
+        </ul>
+    </div>
+
+    <div class="slide">
+        <h1>4.3. SaaS: Software como Servicio</h1>
+        <p>Software listo para consumir. Modelo de entrega predominante hoy en día.</p>
+        <ul>
+            <li><strong>Qué ofrece:</strong> Aplicación final accesible vía navegador o API.</li>
+            <li><strong>Nivel de Control:</strong> Mínimo. El usuario solo configura la aplicación y gestiona sus datos[cite: 33, 346].</li>
+            <li><strong>Características:</strong> Actualizaciones transparentes y automáticas (CI/CD del proveedor), modelo de suscripción[cite: 350].</li>
+            <li><strong>Ejemplos:</strong> Google Workspace, Microsoft 365, Salesforce, Dropbox, Slack[cite: 33, 46].</li>
+        </ul>
+    </div>
+
+    <div class="slide">
+        <h1>5. Modelos de Despliegue de Nube</h1>
+        <p>¿Dónde reside físicamente la infraestructura y quién más la usa?</p>
+        <table>
+            <tr>
+                <th>Tipo</th>
+                <th>Descripción Técnica</th>
+                <th>Ventaja Principal</th>
+            </tr>
+            <tr>
+                <td><strong>Pública</strong></td>
+                <td>Infraestructura multi-tenant (compartida) propiedad del proveedor. Acceso vía Internet público o VPN[cite: 88, 393].</td>
+                <td>Capex cero, escalabilidad infinita, mantenimiento nulo.</td>
+            </tr>
+            <tr>
+                <td><strong>Privada</strong></td>
+                <td>Infraestructura single-tenant (dedicada). Puede ser On-Premise o Hosted (en proveedor)[cite: 89, 397].</td>
+                <td>Control total, seguridad y cumplimiento normativo estricto.</td>
+            </tr>
+            <tr>
+                <td><strong>Híbrida</strong></td>
+                <td>Conexión orquestada entre Nube Pública y Privada. Permite "Cloud Bursting" (desbordar a pública en picos de demanda)[cite: 90, 402].</td>
+                <td>Flexibilidad y optimización de costes.</td>
+            </tr>
+        </table>
+        <p style="margin-top:20px; font-size: 1rem;"><strong>Multicloud:</strong> Estrategia de usar múltiples proveedores públicos (AWS + Azure) para evitar vendor lock-in y aprovechar servicios específicos de cada uno (ej. IA de Google + Integración MS de Azure)[cite: 108, 416].</p>
+    </div>
+
+    <div class="slide">
+        <h1>6. Anatomía Física de la Nube</h1>
+        <p>La "nube" son edificios físicos interconectados por fibra oscura y cables submarinos.</p>
+        <ul>
+            <li><strong>Región:</strong> Área geográfica independiente (ej. "Europa (París)" o "us-east-1"). Contiene múltiples Zonas de Disponibilidad. Permite cumplir leyes de residencia de datos[cite: 168, 477].</li>
+            <li><strong>Zona de Disponibilidad (AZ):</strong> Uno o más Centros de Datos (CPDs) discretos con alimentación, red y refrigeración redundante. Están separadas físicamente (kms) para aislar fallos (incendios, inundaciones) pero conectadas con latencia ultra-baja (<2ms)[cite: 173, 474].</li>
+            <li><strong>Edge Locations (CDN):</strong> Puntos de presencia locales para cachear contenido (Netflix, imágenes) cerca del usuario final y reducir latencia[cite: 236].</li>
+        </ul>
+        <div style="background:#222; border:1px solid #444; padding:10px; text-align:center;">
+            <em>Regla de Oro de Arquitectura:</em> Diseñar siempre para el fallo (Design for Failure) desplegando en múltiples AZs[cite: 26].
+        </div>
+    </div>
+
+    <div class="slide">
+        <h1>7. El Mercado de Hyperscalers</h1>
+        <p>El mercado es un oligopolio dominado por tres grandes actores (62% del mercado en 2022)[cite: 141].</p>
+        <ul>
+            <li><strong>Amazon Web Services (AWS) - 33%:</strong> Pionero (2006). Mayor madurez, mayor cantidad de servicios (+200) y cuota de mercado. Estándar de facto[cite: 146, 447].</li>
+            <li><strong>Microsoft Azure - 21%:</strong> Fuerte en el entorno empresarial (Enterprise). Integración nativa con Active Directory, Windows Server y Office 365. Crecimiento agresivo[cite: 153, 450].</li>
+            <li><strong>Google Cloud (GCP) - 8%:</strong> Especialización en Big Data, Machine Learning (TensorFlow), Kubernetes (creado por Google) y analítica avanzada[cite: 152, 452].</li>
+        </ul>
+        <p><small>Otros: Alibaba Cloud (Asia), IBM Cloud (Híbrida/Legacy), Oracle Cloud (Bases de Datos)[cite: 149, 457].</small></p>
+    </div>
+
+    <div class="slide">
+        <h1>8. Certificaciones y Carrera</h1>
+        <p>La especialización técnica se valida mediante rutas de certificación estandarizadas.</p>
+        <div style="display: flex; gap: 20px;">
+            <div style="flex:1; background: #222; padding: 15px; border-radius: 8px;">
+                <h3 style="color:#FF9900">AWS</h3>
+                <ul style="font-size: 0.9rem;">
+                    <li>Foundational: Cloud Practitioner</li>
+                    <li>Associate: Solutions Architect, Developer</li>
+                    <li>Professional: Solutions Architect, DevOps</li>
+                    <li style="font-style:italic">Validez: 3 años [cite: 253]</li>
+                </ul>
+            </div>
+            <div style="flex:1; background: #222; padding: 15px; border-radius: 8px;">
+                <h3 style="color:#008AD7">Azure</h3>
+                <ul style="font-size: 0.9rem;">
+                    <li>Fundamentals (AZ-900)</li>
+                    <li>Associate: Administrator (AZ-104), Developer</li>
+                    <li>Expert: Solutions Architect</li>
+                    <li style="font-style:italic">Validez: 1 año (renovable free) [cite: 272]</li>
+                </ul>
+            </div>
+        </div>
+        <p style="margin-top: 20px;"><strong>Roles demandados:</strong> Arquitecto de Soluciones, Ingeniero DevOps, Ingeniero de Datos en la Nube, Especialista en FinOps (Gestión de costes).</p>
+    </div>
+
+    <div class="slide">
+        <h1>Resumen de la Sesión</h1>
+        <ul>
+            <li>El Cloud Computing es un modelo de <strong>consumo de servicios</strong> IT basado en OPEX y elasticidad.</li>
+            <li>Los modelos <strong>SPI (SaaS, PaaS, IaaS)</strong> definen cuánto gestiona el proveedor y cuánto el ingeniero.</li>
+            <li>La arquitectura debe ser <strong>resiliente</strong>, aprovechando Regiones y Zonas de Disponibilidad.</li>
+            <li>La <strong>seguridad</strong> es una responsabilidad compartida.</li>
+            <li>El futuro es <strong>Híbrido y Multicloud</strong>, buscando lo mejor de cada proveedor.</li>
+        </ul>
+        <h2 style="text-align: center; margin-top: 50px;">¿Preguntas?</h2>
+    </div>
+
+    <div class="slide-number" id="slide-number">1 / 13</div>
+</div>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<div class="controls">
+    <button id="prevBtn" onclick="changeSlide(-1)">❮ Anterior</button>
+    <button id="nextBtn" onclick="changeSlide(1)">Siguiente ❯</button>
+</div>
+
+<script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const progressBar = document.getElementById('progress-bar');
+    const slideNumber = document.getElementById('slide-number');
+    const totalSlides = slides.length;
+
+    function updateSlides() {
+        slides.forEach((slide, index) => {
+            slide.classList.remove('active', 'prev', 'next');
+            if (index === currentSlide) {
+                slide.classList.add('active');
+            } else if (index < currentSlide) {
+                slide.classList.add('prev');
+            } else {
+                slide.classList.add('next');
+            }
+        });
+
+        // Update buttons
+        document.getElementById('prevBtn').disabled = currentSlide === 0;
+        document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+
+        // Update progress bar
+        const progress = ((currentSlide + 1) / totalSlides) * 100;
+        progressBar.style.width = `${progress}%`;
+
+        // Update slide number
+        slideNumber.textContent = `${currentSlide + 1} / ${totalSlides}`;
+    }
+
+    function changeSlide(direction) {
+        if (direction === 1 && currentSlide < totalSlides - 1) {
+            currentSlide++;
+        } else if (direction === -1 && currentSlide > 0) {
+            currentSlide--;
+        }
+        updateSlides();
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    updateSlides();
+</script>
+
+</body>
+</html>
