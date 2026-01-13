@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundamentos de Cloud Computing - AWS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide.prev {
+            transform: translateX(-100%);
+        }
+
+        /* Estilos para diferentes tipos de slides */
+        .slide-title {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .slide-content {
+            background: white;
+            color: #333;
+        }
+
+        .slide-dark {
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            color: white;
+        }
+
+        .slide-aws {
+            background: linear-gradient(135deg, #232F3E 0%, #FF9900 100%);
+            color: white;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            font-size: 2.5em;
+            margin-bottom: 25px;
+            border-bottom: 4px solid currentColor;
+            padding-bottom: 15px;
+        }
+
+        h3 {
+            font-size: 1.8em;
+            margin: 20px 0;
+            color: #FF9900;
+        }
+
+        .slide-content h3 {
+            color: #667eea;
+        }
+
+        p {
+            font-size: 1.3em;
+            line-height: 1.6;
+            margin: 15px 0;
+            max-width: 900px;
+        }
+
+        ul, ol {
+            font-size: 1.2em;
+            line-height: 1.8;
+            margin: 20px 0;
+            max-width: 900px;
+        }
+
+        li {
+            margin: 12px 0;
+            padding-left: 10px;
+        }
+
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .three-columns {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .box {
+            background: rgba(255,255,255,0.1);
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .slide-content .box {
+            background: #f8f9fa;
+            border: 2px solid #667eea;
+        }
+
+        .diagram {
+            width: 100%;
+            max-width: 800px;
+            margin: 30px 0;
+            padding: 30px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+        }
+
+        .stack-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .stack-layer {
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .layer-user {
+            background: #4ECDC4;
+        }
+
+        .layer-provider {
+            background: #FF6B6B;
+        }
+
+        .layer-partial {
+            background: #FFE66D;
+            color: #333;
+        }
+
+        .comparison-table {
+            width: 100%;
+            max-width: 1000px;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1.1em;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            border: 2px solid rgba(255,255,255,0.2);
+            text-align: left;
+        }
+
+        .comparison-table th {
+            background: rgba(255,255,255,0.1);
+            font-weight: bold;
+        }
+
+        .slide-content .comparison-table th,
+        .slide-content .comparison-table td {
+            border: 2px solid #667eea;
+        }
+
+        .slide-content .comparison-table th {
+            background: #667eea;
+            color: white;
+        }
+
+        .icon {
+            font-size: 4em;
+            margin: 20px 0;
+        }
+
+        .provider-logos {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+            max-width: 1000px;
+            margin: 30px 0;
+        }
+
+        .provider-box {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            min-width: 200px;
+        }
+
+        .market-share {
+            font-size: 3em;
+            font-weight: bold;
+            color: #FF9900;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-button {
+            background: rgba(255,255,255,0.9);
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #667eea;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-button:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(255,255,255,0.9);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            color: #667eea;
+            z-index: 1000;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #FF9900 0%, #FFE66D 100%);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #232F3E;
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px 0;
+        }
+
+        .service-card {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #FF9900;
+        }
+
+        .service-card h4 {
+            color: #FF9900;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .cert-path {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .cert-box {
+            background: rgba(255,255,255,0.1);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 200px;
+            border: 3px solid #FF9900;
+        }
+
+        .cert-arrow {
+            font-size: 3em;
+            color: #FF9900;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide.active * {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .emoji {
+            font-size: 1.5em;
+        }
+
+        .note {
+            background: #FFE66D;
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #FF9900;
+            margin: 20px 0;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Portada -->
+        <div class="slide slide-title active">
+            <h1>☁️ Fundamentos de Cloud Computing</h1>
+            <h2>Introducción a AWS</h2>
+            <p style="font-size: 1.5em; margin-top: 50px;">Arquitectura Cloud para 2º DAM</p>
+            <p style="font-size: 1.2em; margin-top: 20px; opacity: 0.9;">De la infraestructura física a la nube</p>
+        </div>
+
+        <!-- Slide 2: ¿Qué es Cloud Computing? -->
+        <div class="slide slide-content">
+            <h2>☁️ ¿Qué es Cloud Computing?</h2>
+            <p><strong>Cloud Computing</strong> es la disponibilidad <span class="highlight">bajo demanda</span> de recursos de computación a través de Internet.</p>
+            <div class="two-columns" style="margin-top: 40px;">
+                <div class="box">
+                    <h3>🎯 Concepto Clave</h3>
+                    <p>Acceso a servidores, almacenamiento, bases de datos, redes y aplicaciones sin gestionar hardware físico</p>
+                </div>
+                <div class="box">
+                    <h3>💰 Modelo de Pago</h3>
+                    <p>Pago por uso: solo pagas por los recursos que realmente consumes</p>
+                </div>
+            </div>
+            <p style="margin-top: 40px;"><strong>Ejemplos cotidianos:</strong> Netflix 🎬, Spotify 🎵, Gmail 📧, Google Drive 📁, Dropbox 💾</p>
+        </div>
+
+        <!-- Slide 3: Infraestructura tradicional vs Cloud -->
+        <div class="slide slide-dark">
+            <h2>🏢 Infraestructura Tradicional vs Cloud</h2>
+            <div class="two-columns" style="margin-top: 30px;">
+                <div class="box">
+                    <h3>❌ Tradicional (On-Premise)</h3>
+                    <ul>
+                        <li>Compra de hardware físico</li>
+                        <li>Centro de datos propio (CPD)</li>
+                        <li>Inversión inicial elevada</li>
+                        <li>Ciclos largos (semanas/meses)</li>
+                        <li>Capacidad fija</li>
+                        <li>Mantenimiento propio</li>
+                    </ul>
+                </div>
+                <div class="box">
+                    <h3>✅ Cloud (Infraestructura como Software)</h3>
+                    <ul>
+                        <li>Servidores virtuales</li>
+                        <li>Sin hardware físico</li>
+                        <li>Sin inversión inicial</li>
+                        <li>Despliegue en minutos</li>
+                        <li>Escalabilidad dinámica</li>
+                        <li>Gestión del proveedor</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Características del Cloud -->
+        <div class="slide slide-content">
+            <h2>⭐ Características Clave del Cloud</h2>
+            <div class="three-columns" style="margin-top: 30px;">
+                <div class="box">
+                    <div class="icon">🌐</div>
+                    <h4>Acceso Remoto</h4>
+                    <p>Desde cualquier lugar con Internet</p>
+                </div>
+                <div class="box">
+                    <div class="icon">📈</div>
+                    <h4>Escalabilidad</h4>
+                    <p>Crece o reduce según demanda</p>
+                </div>
+                <div class="box">
+                    <div class="icon">💵</div>
+                    <h4>Pago por Uso</h4>
+                    <p>Solo pagas lo que consumes</p>
+                </div>
+                <div class="box">
+                    <div class="icon">🔄</div>
+                    <h4>Alta Disponibilidad</h4>
+                    <p>Redundancia automática</p>
+                </div>
+                <div class="box">
+                    <div class="icon">🛠️</div>
+                    <h4>Servicio Gestionado</h4>
+                    <p>Actualizaciones automáticas</p>
+                </div>
+                <div class="box">
+                    <div class="icon">🤝</div>
+                    <h4>Recursos Compartidos</h4>
+                    <p>Infraestructura multicliente</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Modelos de Servicio - Introducción -->
+        <div class="slide slide-aws">
+            <h2>🎯 Modelos de Servicio en la Nube</h2>
+            <p style="font-size: 1.4em; margin: 40px 0;">Tres niveles de abstracción según control vs comodidad</p>
+            <div class="three-columns">
+                <div class="cert-box">
+                    <h3 style="color: white;">IaaS</h3>
+                    <p>Infrastructure as a Service</p>
+                    <p style="font-size: 2em; margin: 20px 0;">🖥️</p>
+                </div>
+                <div class="cert-box">
+                    <h3 style="color: white;">PaaS</h3>
+                    <p>Platform as a Service</p>
+                    <p style="font-size: 2em; margin: 20px 0;">⚙️</p>
+                </div>
+                <div class="cert-box">
+                    <h3 style="color: white;">SaaS</h3>
+                    <p>Software as a Service</p>
+                    <p style="font-size: 2em; margin: 20px 0;">📱</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: IaaS -->
+        <div class="slide slide-content">
+            <h2>🖥️ IaaS - Infrastructure as a Service</h2>
+            <div class="box" style="max-width: 900px; margin: 30px 0;">
+                <h3>¿Qué es?</h3>
+                <p>Proporciona recursos básicos: servidores virtuales, almacenamiento y redes. <strong>TÚ gestionas</strong> el sistema operativo, aplicaciones y datos.</p>
+            </div>
+            <div class="two-columns">
+                <div>
+                    <h3>✅ Ventajas</h3>
+                    <ul>
+                        <li><strong>Máximo control</strong> sobre recursos</li>
+                        <li>Flexibilidad total</li>
+                        <li>Personalización completa</li>
+                        <li>Ideal para apps legacy</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>📦 Ejemplos</h3>
+                    <ul>
+                        <li><strong>Amazon EC2</strong> (AWS)</li>
+                        <li>Azure Virtual Machines</li>
+                        <li>Google Compute Engine</li>
+                        <li>IBM Cloud Virtual Servers</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: PaaS -->
+        <div class="slide slide-content">
+            <h2>⚙️ PaaS - Platform as a Service</h2>
+            <div class="box" style="max-width: 900px; margin: 30px 0;">
+                <h3>¿Qué es?</h3>
+                <p>Entorno completo para <strong>desarrollar y desplegar</strong> aplicaciones. El proveedor gestiona infraestructura, SO y middleware. <strong>TÚ solo te preocupas del código</strong>.</p>
+            </div>
+            <div class="two-columns">
+                <div>
+                    <h3>✅ Ventajas</h3>
+                    <ul>
+                        <li>Desarrollo más rápido</li>
+                        <li>Sin gestión de servidores</li>
+                        <li>Escalado automático</li>
+                        <li>Ideal para DevOps</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>📦 Ejemplos</h3>
+                    <ul>
+                        <li><strong>AWS Elastic Beanstalk</strong></li>
+                        <li>Google App Engine</li>
+                        <li>Azure App Service</li>
+                        <li>Heroku</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: SaaS -->
+        <div class="slide slide-content">
+            <h2>📱 SaaS - Software as a Service</h2>
+            <div class="box" style="max-width: 900px; margin: 30px 0;">
+                <h3>¿Qué es?</h3>
+                <p>Aplicación completa lista para usar. <strong>El proveedor gestiona TODO</strong>. Tú solo accedes y utilizas el software.</p>
+            </div>
+            <div class="two-columns">
+                <div>
+                    <h3>✅ Ventajas</h3>
+                    <ul>
+                        <li>Cero mantenimiento</li>
+                        <li>Acceso desde cualquier lugar</li>
+                        <li>Actualizaciones automáticas</li>
+                        <li>Pago por suscripción</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>📦 Ejemplos</h3>
+                    <ul>
+                        <li><strong>Gmail</strong> / Outlook 365</li>
+                        <li>Salesforce</li>
+                        <li>Dropbox / Google Drive</li>
+                        <li>Slack / Microsoft Teams</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Comparación visual -->
+        <div class="slide slide-dark">
+            <h2>📊 Comparación: Responsabilidades</h2>
+            <div class="diagram">
+                <div class="stack-diagram">
+                    <div style="display: grid; grid-template-columns: 150px 1fr 1fr 1fr 1fr; gap: 5px; text-align: center;">
+                        <div style="padding: 10px; font-weight: bold;"></div>
+                        <div style="padding: 10px; font-weight: bold;">On-Premise</div>
+                        <div style="padding: 10px; font-weight: bold;">IaaS</div>
+                        <div style="padding: 10px; font-weight: bold;">PaaS</div>
+                        <div style="padding: 10px; font-weight: bold;">SaaS</div>
+
+                        <div style="padding: 10px;">Aplicaciones</div>
+                        <div class="stack-layer layer-user">TÚ</div>
+                        <div class="stack-layer layer-user">TÚ</div>
+                        <div class="stack-layer layer-user">TÚ</div>
+                        <div class="stack-layer layer-provider">PROVEEDOR</div>
+
+                        <div style="padding: 10px;">Datos</div>
+                        <div class="stack-layer layer-user">TÚ</div>
+                        <div class="stack-layer layer-user">TÚ</div>
+                        <div class="stack-layer layer-user">TÚ</div>
+                        <div class="stack-layer layer-provider">PROVEEDOR</div>
+
+                        <div style="padding: 10px;">Runtime</div>
+                        <div class="stack-layer layer-user">TÚ</div>
+                        <div class="stack-layer layer-user">TÚ</div>
+                        <div class="stack-layer layer-provider">PROVEEDOR</div>
+                        <div class="stack-layer layer-provider">PROVEEDOR</div>
+
+                        <div style="padding: 10px;">Middleware</div>
+                        <div class="stack-layer layer-user">TÚ</div>
+                        <div class="stack-layer layer-user">TÚ</div>
+                        <div class="stack-layer layer-provider">PROVEEDOR</div>
+                        <div class="stack-layer layer-provider">PROVEEDOR</div>
+
+                        <div style="padding: 10px;">SO</div>
+                        <div class="stack-layer layer-user">TÚ</div>
+                        <div class="stack-layer layer-user">TÚ</div>
+                        <div class="stack-layer layer-provider">PROVEEDOR</div>
+                        <div class="stack-layer layer-provider">PROVEEDOR</div>
+
+                        <div style="padding: 10px;">Virtualización</div>
+                        <div class="stack-layer layer-user">TÚ</div>
+                        <div class="stack-layer layer-provider">PROVEEDOR</div>
+                        <div class="stack-layer layer-provider">PROVEEDOR</div>
+                        <div class="stack-layer layer-provider">PROVEEDOR</div>
+
+                        <div style="padding: 10px;">Servidores</div>
+                        <div class="stack-layer layer-user">TÚ</div>
+                        <div class="stack-layer layer-provider">PROVEEDOR</div>
+                        <div class="stack-layer layer-provider">PROVEEDOR</div>
+                        <div class="stack-layer layer-provider">PROVEEDOR</div>
+
+                        <div style="padding: 10px;">Redes</div>
+                        <div class="stack-layer layer-user">TÚ</div>
+                        <div class="stack-layer layer-provider">PROVEEDOR</div>
+                        <div class="stack-layer layer-provider">PROVEEDOR</div>
+                        <div class="stack-layer layer-provider">PROVEEDOR</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Modelos de Despliegue -->
+        <div class="slide slide-content">
+            <h2>🌍 Modelos de Despliegue</h2>
+            <div class="three-columns" style="margin-top: 40px;">
+                <div class="box">
+                    <h3>☁️ Nube Pública</h3>
+                    <p><strong>Multicliente</strong>, recursos compartidos</p>
+                    <ul style="margin-top: 15px; font-size: 1em;">
+                        <li>AWS, Azure, GCP</li>
+                        <li>Menor coste</li>
+                        <li>Escalabilidad infinita</li>
+                        <li>Sin gestión de hardware</li>
+                    </ul>
+                </div>
+                <div class="box">
+                    <h3>🏢 Nube Privada</h3>
+                    <p><strong>Dedicada</strong> a una organización</p>
+                    <ul style="margin-top: 15px; font-size: 1em;">
+                        <li>Mayor control</li>
+                        <li>Más seguridad</li>
+                        <li>Cumplimiento normativo</li>
+                        <li>Mayor coste</li>
+                    </ul>
+                </div>
+                <div class="box">
+                    <h3>🔀 Nube Híbrida</h3>
+                    <p><strong>Combinación</strong> de ambas</p>
+                    <ul style="margin-top: 15px; font-size: 1em;">
+                        <li>Lo mejor de ambos mundos</li>
+                        <li>Flexibilidad máxima</li>
+                        <li>Datos sensibles en privada</li>
+                        <li>Más complejidad</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Ventajas del Cloud -->
+        <div class="slide slide-aws">
+            <h2>✅ Ventajas de Cloud Computing</h2>
+            <div class="two-columns" style="margin-top: 30px;">
+                <div>
+                    <ul style="font-size: 1.3em;">
+                        <li>💰 <strong>Menor coste</strong>: CAPEX → OPEX</li>
+                        <li>⚡ <strong>Agilidad</strong>: despliegue en minutos</li>
+                        <li>🛠️ <strong>Sin mantenimiento</strong> de hardware</li>
+                        <li>📦 <strong>Portabilidad</strong>: acceso universal</li>
+                    </ul>
+                </div>
+                <div>
+                    <ul style="font-size: 1.3em;">
+                        <li>📈 <strong>Escalabilidad</strong>: crece según necesidad</li>
+                        <li>🔧 <strong>Flexibilidad</strong>: amplia variedad de recursos</li>
+                        <li>🌍 <strong>Alcance global</strong>: presencia mundial</li>
+                        <li>♻️ <strong>Sostenibilidad</strong>: eficiencia energética</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Desventajas del Cloud -->
+        <div class="slide slide-dark">
+            <h2>⚠️ Desventajas y Riesgos</h2>
+            <div class="service-grid">
+                <div class="service-card">
+                    <h4>🌐 Dependencia de Internet</h4>
+                    <p>Sin conectividad, sin servicio. Crítico para sistemas vitales.</p>
+                </div>
+                <div class="service-card">
+                    <h4>⏱️ Latencia</h4>
+                    <p>Datos remotos pueden tener mayor tiempo de respuesta que on-premise.</p>
+                </div>
+                <div class="service-card">
+                    <h4>🔒 Vendor Lock-in</h4>
+                    <p>Difícil migrar entre proveedores (APIs propietarias, formatos específicos).</p>
+                </div>
+                <div class="service-card">
+                    <h4>🛡️ Seguridad y Privacidad</h4>
+                    <p>Datos externalizados, cumplimiento normativo, brechas potenciales.</p>
+                </div>
+                <div class="service-card">
+                    <h4>💸 Costes inesperados</h4>
+                    <p>Mal dimensionamiento puede resultar más caro que on-premise.</p>
+                </div>
+                <div class="service-card">
+                    <h4>🎨 Creatividad limitada</h4>
+                    <p>Menos control sobre hardware específico (GPUs personalizadas, etc).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Proveedores Principales -->
+        <div class="slide slide-content">
+            <h2>🏆 Principales Proveedores Cloud</h2>
+            <div class="provider-logos" style="flex-direction: column; gap: 40px;">
+                <div style="display: flex; gap: 40px; justify-content: center; width: 100%;">
+                    <div class="provider-box">
+                        <h3 style="color: #FF9900;">AWS</h3>
+                        <div class="market-share">33%</div>
+                        <p><strong>Líder del mercado</strong></p>
+                        <p>Pionero (2006), más servicios</p>
+                    </div>
+                    <div class="provider-box">
+                        <h3 style="color: #0078D4;">Azure</h3>
+                        <div class="market-share" style="color: #0078D4;">21%</div>
+                        <p><strong>Microsoft</strong></p>
+                        <p>Integración con Windows/Office</p>
+                    </div>
+                    <div class="provider-box">
+                        <h3 style="color: #4285F4;">GCP</h3>
+                        <div class="market-share" style="color: #4285F4;">8%</div>
+                        <p><strong>Google</strong></p>
+                        <p>Líder en Big Data e IA</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 30px; justify-content: center;">
+                    <div class="provider-box" style="min-width: 150px;">
+                        <h4>IBM Cloud</h4>
+                        <p>Soluciones híbridas</p>
+                    </div>
+                    <div class="provider-box" style="min-width: 150px;">
+                        <h4>Oracle Cloud</h4>
+                        <p>Bases de datos</p>
+                    </div>
+                    <div class="provider-box" style="min-width: 150px;">
+                        <h4>Alibaba Cloud</h4>
+                        <p>Líder en Asia</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Infraestructura Física -->
+        <div class="slide slide-aws">
+            <h2>🏗️ ¿Dónde está la nube?</h2>
+            <p style="font-size: 1.3em; margin: 30px 0;">La nube son <strong>servidores físicos</strong> funcionando 24/7 en <strong>centros de datos</strong> distribuidos globalmente</p>
+            <div class="three-columns">
+                <div class="box">
+                    <h3 style="color: white;">🏢 CPD</h3>
+                    <p><strong>Centro de Proceso de Datos</strong></p>
+                    <p>Edificios con miles de servidores, refrigeración y seguridad</p>
+                </div>
+                <div class="box">
+                    <h3 style="color: white;">🌐 AZ</h3>
+                    <p><strong>Availability Zone</strong></p>
+                    <p>Grupo de 1-6 CPDs con infraestructura independiente</p>
+                </div>
+                <div class="box">
+                    <h3 style="color: white;">🗺️ Región</h3>
+                    <p><strong>Área Geográfica</strong></p>
+                    <p>Cada región tiene 2+ zonas de disponibilidad</p>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 40px; max-width: 900px;">
+                <strong>Ejemplo:</strong> Microsoft sumergió un datacenter (Proyecto Natick) bajo el agua para aprovechar refrigeración natural. Google instala CPDs en Finlandia por el clima frío.
+            </div>
+        </div>
+
+        <!-- Slide 15: Estructura AWS -->
+        <div class="slide slide-content">
+            <h2>🌍 Estructura de Regiones AWS</h2>
+            <div class="diagram" style="background: white; border: 3px solid #667eea;">
+                <h3 style="text-align: center; color: #667eea;">Región EU (Irlanda)</h3>
+                <div style="display: flex; justify-content: space-around; margin: 30px 0;">
+                    <div class="box" style="border: 3px solid #FF6B6B;">
+                        <h4 style="color: #FF6B6B;">AZ-1a</h4>
+                        <p>🏢 CPD A</p>
+                        <p>🏢 CPD B</p>
+                    </div>
+                    <div class="box" style="border: 3px solid #4ECDC4;">
+                        <h4 style="color: #4ECDC4;">AZ-1b</h4>
+                        <p>🏢 CPD C</p>
+                        <p>🏢 CPD D</p>
+                    </div>
+                    <div class="box" style="border: 3px solid #FFE66D; color: #333;">
+                        <h4 style="color: #FF9900;">AZ-1c</h4>
+                        <p>🏢 CPD E</p>
+                        <p>🏢 CPD F</p>
+                    </div>
+                </div>
+            </div>
+            <div class="note" style="max-width: 900px;">
+                <strong>Alta disponibilidad:</strong> Si una AZ completa falla (apagón, incendio), tus aplicaciones siguen funcionando en las otras AZs
+            </div>
+        </div>
+
+        <!-- Slide 16: Intro AWS -->
+        <div class="slide slide-aws">
+            <h1>☁️ Amazon Web Services</h1>
+            <h2>La plataforma cloud líder mundial</h2>
+            <div class="two-columns" style="margin-top: 50px;">
+                <div class="box">
+                    <h3 style="color: white;">📊 33% del mercado</h3>
+                    <p>Más de 200 servicios disponibles</p>
+                    <p>Presencia en 30+ regiones globales</p>
+                </div>
+                <div class="box">
+                    <h3 style="color: white;">🚀 Pionero (2006)</h3>
+                    <p>Ventaja competitiva de 14 años</p>
+                    <p>Estándar de facto del sector</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Servicios AWS - Cómputo -->
+        <div class="slide slide-content">
+            <h2>💻 AWS - Servicios de Cómputo</h2>
+            <div class="service-grid">
+                <div class="service-card">
+                    <h4>EC2</h4>
+                    <p><strong>Servidores virtuales</strong> con control total. IaaS puro.</p>
+                    <p><em>Úsalo para:</em> Apps tradicionales, máximo control</p>
+                </div>
+                <div class="service-card">
+                    <h4>Lambda</h4>
+                    <p><strong>Serverless</strong>. Ejecuta código sin gestionar servidores.</p>
+                    <p><em>Úsalo para:</em> APIs, event-driven, microservicios</p>
+                </div>
+                <div class="service-card">
+                    <h4>Elastic Beanstalk</h4>
+                    <p><strong>PaaS</strong>. Sube tu código, AWS gestiona todo.</p>
+                    <p><em>Úsalo para:</em> Apps web rápidas, equipos pequeños</p>
+                </div>
+                <div class="service-card">
+                    <h4>ECS / EKS</h4>
+                    <p><strong>Contenedores</strong>. ECS (AWS) o EKS (Kubernetes).</p>
+                    <p><em>Úsalo para:</em> Microservicios, Docker</p>
+                </div>
+                <div class="service-card">
+                    <h4>Fargate</h4>
+                    <p><strong>Contenedores serverless</strong>. Sin gestión de nodos.</p>
+                    <p><em>Úsalo para:</em> Contenedores sin operaciones</p>
+                </div>
+                <div class="service-card">
+                    <h4>Auto Scaling + ELB</h4>
+                    <p><strong>Escalado automático</strong> y balanceo de carga.</p>
+                    <p><em>Úsalo para:</em> Alta disponibilidad</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 18: Almacenamiento -->
+        <div class="slide slide-dark">
+            <h2>💾 AWS - Servicios de Almacenamiento</h2>
+            <div class="service-grid">
+                <div class="service-card">
+                    <h4>S3</h4>
+                    <p><strong>Object Storage</strong>. Almacenamiento masivo, altamente duradero.</p>
+                    <p><em>Úsalo para:</em> Archivos, backups, data lakes, web estáticas</p>
+                </div>
+                <div class="service-card">
+                    <h4>EBS</h4>
+                    <p><strong>Block Storage</strong>. Discos para instancias EC2.</p>
+                    <p><em>Úsalo para:</em> Disco del SO, bases de datos</p>
+                </div>
+                <div class="service-card">
+                    <h4>EFS</h4>
+                    <p><strong>File System</strong> NFS compartido y elástico.</p>
+                    <p><em>Úsalo para:</em> Compartir archivos entre servidores</p>
+                </div>
+                <div class="service-card">
+                    <h4>Glacier</h4>
+                    <p><strong>Archive Storage</strong>. Muy barato, acceso lento.</p>
+                    <p><em>Úsalo para:</em> Backups a largo plazo, cumplimiento</p>
+                </div>
+                <div class="service-card">
+                    <h4>FSx</h4>
+                    <p><strong>Sistemas especializados</strong>. Windows, Lustre, NetApp, ZFS.</p>
+                    <p><em>Úsalo para:</em> HPC, Windows shares, ML</p>
+                </div>
+                <div class="service-card">
+                    <h4>AWS Backup</h4>
+                    <p><strong>Copias centralizadas</strong> de múltiples servicios.</p>
+                    <p><em>Úsalo para:</em> Política de backup unificada</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 19: Bases de Datos -->
+        <div class="slide slide-content">
+            <h2>🗄️ AWS - Bases de Datos</h2>
+            <div class="service-grid">
+                <div class="service-card">
+                    <h4>RDS</h4>
+                    <p><strong>SQL Gestionado</strong>. MySQL, PostgreSQL, Oracle, SQL Server, MariaDB.</p>
+                    <p><em>Úsalo para:</em> Apps transaccionales (OLTP)</p>
+                </div>
+                <div class="service-card">
+                    <h4>Aurora</h4>
+                    <p><strong>SQL mejorado</strong>. Compatible MySQL/PostgreSQL, más rápido.</p>
+                    <p><em>Úsalo para:</em> Mejor rendimiento y HA que RDS</p>
+                </div>
+                <div class="service-card">
+                    <h4>DynamoDB</h4>
+                    <p><strong>NoSQL serverless</strong>. Clave-valor, latencia <10ms.</p>
+                    <p><em>Úsalo para:</em> Apps escalables, IoT, gaming</p>
+                </div>
+                <div class="service-card">
+                    <h4>Redshift</h4>
+                    <p><strong>Data Warehouse</strong>. Analítica (OLAP) a gran escala.</p>
+                    <p><em>Úsalo para:</em> BI, informes, big data</p>
+                </div>
+                <div class="service-card">
+                    <h4>ElastiCache</h4>
+                    <p><strong>Cache en memoria</strong>. Redis o Memcached.</p>
+                    <p><em>Úsalo para:</em> Acelerar lecturas, sesiones</p>
+                </div>
+                <div class="service-card">
+                    <h4>Otros</h4>
+                    <p><strong>Especializadas:</strong> Neptune (grafos), DocumentDB (MongoDB), Timestream (series temporales)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 20: Redes -->
+        <div class="slide slide-aws">
+            <h2>🌐 AWS - Redes y Entrega de Contenido</h2>
+            <div class="service-grid">
+                <div class="service-card">
+                    <h4>VPC</h4>
+                    <p><strong>Red privada virtual</strong>. Subnets, Security Groups, NACLs, rutas.</p>
+                    <p><em>Úsalo para:</em> Aislar y segmentar recursos</p>
+                </div>
+                <div class="service-card">
+                    <h4>Route 53</h4>
+                    <p><strong>DNS gestionado</strong>. Routing avanzado, health checks.</p>
+                    <p><em>Úsalo para:</em> Resolver dominios, failover</p>
+                </div>
+                <div class="service-card">
+                    <h4>CloudFront</h4>
+                    <p><strong>CDN global</strong>. Distribuye contenido desde edge locations.</p>
+                    <p><em>Úsalo para:</em> Acelerar webs, streaming</p>
+                </div>
+                <div class="service-card">
+                    <h4>ELB</h4>
+                    <p><strong>Load Balancers</strong>. ALB (L7), NLB (L4), GWLB.</p>
+                    <p><em>Úsalo para:</em> Distribuir tráfico, HA</p>
+                </div>
+                <div class="service-card">
+                    <h4>Direct Connect</h4>
+                    <p><strong>Conexión dedicada</strong> desde tu CPD a AWS.</p>
+                    <p><em>Úsalo para:</em> Baja latencia, híbrido</p>
+                </div>
+                <div class="service-card">
+                    <h4>Transit Gateway</h4>
+                    <p><strong>Hub de conectividad</strong>. Conecta múltiples VPCs y on-prem.</p>
+                    <p><em>Úsalo para:</em> Arquitecturas complejas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 21: Seguridad -->
+        <div class="slide slide-dark">
+            <h2>🔒 AWS - Seguridad e Identidad</h2>
+            <div class="service-grid">
+                <div class="service-card">
+                    <h4>IAM</h4>
+                    <p><strong>Identidades y permisos</strong>. Usuarios, roles, políticas.</p>
+                    <p><em>Principio:</em> Menor privilegio</p>
+                </div>
+                <div class="service-card">
+                    <h4>Cognito</h4>
+                    <p><strong>Autenticación de usuarios finales</strong>. Login social, MFA.</p>
+                    <p><em>Úsalo para:</em> Apps móviles/web</p>
+                </div>
+                <div class="service-card">
+                    <h4>KMS</h4>
+                    <p><strong>Gestión de claves</strong>. Cifrado de datos en AWS.</p>
+                    <p><em>Úsalo para:</em> Encriptar S3, EBS, RDS</p>
+                </div>
+                <div class="service-card">
+                    <h4>WAF + Shield</h4>
+                    <p><strong>Firewall web + DDoS</strong>. Protección ante ataques.</p>
+                    <p><em>Úsalo para:</em> Bloquear tráfico malicioso</p>
+                </div>
+                <div class="service-card">
+                    <h4>GuardDuty</h4>
+                    <p><strong>Detección de amenazas</strong>. Analiza logs y telemetría.</p>
+                    <p><em>Úsalo para:</em> Seguridad proactiva</p>
+                </div>
+                <div class="service-card">
+                    <h4>Secrets Manager</h4>
+                    <p><strong>Gestión de secretos</strong>. Credenciales, API keys.</p>
+                    <p><em>Úsalo para:</em> Rotación automática</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 22: Monitorización -->
+        <div class="slide slide-content">
+            <h2>📊 AWS - Monitorización y Gestión</h2>
+            <div class="service-grid">
+                <div class="service-card">
+                    <h4>CloudWatch</h4>
+                    <p><strong>Métricas, logs y alarmas</strong>. Dashboards, eventos.</p>
+                    <p><em>Úsalo para:</em> Observabilidad, alertas</p>
+                </div>
+                <div class="service-card">
+                    <h4>CloudTrail</h4>
+                    <p><strong>Auditoría de API</strong>. Quién hizo qué y cuándo.</p>
+                    <p><em>Úsalo para:</em> Cumplimiento, forense</p>
+                </div>
+                <div class="service-card">
+                    <h4>Config</h4>
+                    <p><strong>Inventario y conformidad</strong>. Detecta cambios no autorizados.</p>
+                    <p><em>Úsalo para:</em> Drift detection</p>
+                </div>
+                <div class="service-card">
+                    <h4>Systems Manager</h4>
+                    <p><strong>Suite operacional</strong>. Session Manager, Patch Manager, Automation.</p>
+                    <p><em>Úsalo para:</em> Gestión sin SSH</p>
+                </div>
+                <div class="service-card">
+                    <h4>Trusted Advisor</h4>
+                    <p><strong>Recomendaciones</strong>. Coste, seguridad, rendimiento.</p>
+                    <p><em>Úsalo para:</em> Optimizar recursos</p>
+                </div>
+                <div class="service-card">
+                    <h4>Organizations</h4>
+                    <p><strong>Multi-cuenta</strong>. Gestión centralizada, SCPs.</p>
+                    <p><em>Úsalo para:</em> Gobernanza empresarial</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 23: Guía rápida de elección -->
+        <div class="slide slide-aws">
+            <h2>🎯 ¿Qué servicio uso?</h2>
+            <div style="max-width: 1000px; text-align: left;">
+                <ul style="font-size: 1.2em; line-height: 2;">
+                    <li>🖥️ <strong>Servidor con control total</strong> → EC2 + ALB + Auto Scaling</li>
+                    <li>⚡ <strong>Funciones sin servidores</strong> → Lambda</li>
+                    <li>📦 <strong>Desplegar código fácilmente</strong> → Elastic Beanstalk</li>
+                    <li>🐳 <strong>Contenedores sin complicaciones</strong> → ECS + Fargate</li>
+                    <li>☸️ <strong>Kubernetes estándar</strong> → EKS</li>
+                    <li>💾 <strong>Almacenar archivos masivamente</strong> → S3</li>
+                    <li>💿 <strong>Disco del servidor</strong> → EBS</li>
+                    <li>📁 <strong>Compartir archivos entre servidores</strong> → EFS</li>
+                    <li>🗄️ <strong>Base de datos SQL</strong> → RDS o Aurora</li>
+                    <li>⚡ <strong>NoSQL a gran escala</strong> → DynamoDB</li>
+                    <li>📊 <strong>Analítica / BI</strong> → Redshift</li>
+                    <li>🌐 <strong>Red privada en AWS</strong> → VPC</li>
+                    <li>🚀 <strong>CDN global</strong> → CloudFront</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 24: Certificaciones - Intro -->
+        <div class="slide slide-dark">
+            <h1>🎓 Certificaciones AWS</h1>
+            <h2>Tu carrera profesional en Cloud</h2>
+            <div class="box" style="max-width: 900px; margin-top: 50px;">
+                <p style="font-size: 1.4em;">Las certificaciones AWS validan tus conocimientos y abren puertas laborales en el sector cloud</p>
+            </div>
+        </div>
+
+        <!-- Slide 25: Rutas de certificación -->
+        <div class="slide slide-content">
+            <h2>🛣️ Rutas de Certificación AWS</h2>
+            <div class="cert-path">
+                <div class="cert-box">
+                    <h3>FOUNDATIONAL</h3>
+                    <h4>Cloud Practitioner</h4>
+                    <p style="margin-top: 10px;">Conceptos básicos</p>
+                </div>
+                <div class="cert-arrow">→</div>
+                <div class="cert-box">
+                    <h3>ASSOCIATE</h3>
+                    <h4>Solutions Architect</h4>
+                    <h4>Developer</h4>
+                    <h4>SysOps Admin</h4>
+                </div>
+                <div class="cert-arrow">→</div>
+                <div class="cert-box">
+                    <h3>PROFESSIONAL</h3>
+                    <h4>Solutions Architect Pro</h4>
+                    <h4>DevOps Engineer Pro</h4>
+                </div>
+            </div>
+            <div class="note" style="max-width: 900px; margin-top: 40px;">
+                <strong>Especialidades:</strong> También existen certificaciones especializadas en Security, Machine Learning, Database, Data Analytics, Networking, SAP on AWS...
+            </div>
+        </div>
+
+        <!-- Slide 26: Certificaciones detalle -->
+        <div class="slide slide-aws">
+            <h2>📜 Certificaciones Principales</h2>
+            <table class="comparison-table">
+                <tr>
+                    <th>Nivel</th>
+                    <th>Certificación</th>
+                    <th>Para quién</th>
+                    <th>Precio</th>
+                </tr>
+                <tr>
+                    <td>Foundational</td>
+                    <td><strong>Cloud Practitioner</strong></td>
+                    <td>Principiantes, roles no técnicos</td>
+                    <td>100 USD</td>
+                </tr>
+                <tr>
+                    <td rowspan="3">Associate</td>
+                    <td><strong>Solutions Architect</strong></td>
+                    <td>Diseñar arquitecturas cloud</td>
+                    <td>150 USD</td>
+                </tr>
+                <tr>
+                    <td><strong>Developer</strong></td>
+                    <td>Desarrolladores de apps</td>
+                    <td>150 USD</td>
+                </tr>
+                <tr>
+                    <td><strong>SysOps Administrator</strong></td>
+                    <td>Operaciones y administración</td>
+                    <td>150 USD</td>
+                </tr>
+                <tr>
+                    <td rowspan="2">Professional</td>
+                    <td><strong>Solutions Architect Pro</strong></td>
+                    <td>Arquitecturas complejas</td>
+                    <td>300 USD</td>
+                </tr>
+                <tr>
+                    <td><strong>DevOps Engineer Pro</strong></td>
+                    <td>CI/CD, automatización</td>
+                    <td>300 USD</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Slide 27: Beneficios certificaciones -->
+        <div class="slide slide-dark">
+            <h2>✅ Beneficios de Certificarte</h2>
+            <div class="three-columns" style="margin-top: 40px;">
+                <div class="box">
+                    <div class="icon">💼</div>
+                    <h4>Empleabilidad</h4>
+                    <p>Mayor demanda en el mercado laboral</p>
+                    <p>Salarios más altos</p>
+                </div>
+                <div class="box">
+                    <div class="icon">🎯</div>
+                    <h4>Validación</h4>
+                    <p>Demuestra conocimientos oficiales</p>
+                    <p>Reconocimiento internacional</p>
+                </div>
+                <div class="box">
+                    <div class="icon">📚</div>
+                    <h4>Aprendizaje</h4>
+                    <p>Estructura tu formación</p>
+                    <p>Conocimientos prácticos</p>
+                </div>
+                <div class="box">
+                    <div class="icon">🌐</div>
+                    <h4>Networking</h4>
+                    <p>Comunidad de certificados</p>
+                    <p>Eventos exclusivos AWS</p>
+                </div>
+                <div class="box">
+                    <div class="icon">🔄</div>
+                    <h4>Actualización</h4>
+                    <p>Te mantiene al día</p>
+                    <p>Nuevas tecnologías</p>
+                </div>
+                <div class="box">
+                    <div class="icon">🎁</div>
+                    <h4>Beneficios AWS</h4>
+                    <p>Descuentos en exámenes</p>
+                    <p>Créditos para labs</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 28: Problemas y retos -->
+        <div class="slide slide-content">
+            <h2>⚠️ Retos de las Certificaciones</h2>
+            <div class="two-columns" style="margin-top: 40px;">
+                <div>
+                    <h3>Desafíos</h3>
+                    <ul style="font-size: 1.2em;">
+                        <li>💰 <strong>Coste:</strong> 100-300 USD por examen</li>
+                        <li>⏰ <strong>Tiempo de estudio:</strong> 40-200 horas según nivel</li>
+                        <li>📅 <strong>Vigencia limitada:</strong> Expiran a los 3 años</li>
+                        <li>🔄 <strong>Recertificación:</strong> Hay que renovar</li>
+                        <li>📖 <strong>Contenido amplio:</strong> Muchos servicios que estudiar</li>
+                        <li>🎯 <strong>Exámenes exigentes:</strong> Nivel Associate+ es difícil</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Consejos</h3>
+                    <ul style="font-size: 1.2em;">
+                        <li>✅ Practica con <strong>labs hands-on</strong></li>
+                        <li>📺 Usa cursos de <strong>A Cloud Guru, Udemy</strong></li>
+                        <li>📝 Haz <strong>exámenes de práctica</strong></li>
+                        <li>🔧 <strong>Experimenta</strong> en la consola AWS</li>
+                        <li>👥 Únete a <strong>comunidades</strong> (Reddit, Discord)</li>
+                        <li>📚 Lee la <strong>documentación oficial</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 29: Comparación AWS vs Azure -->
+        <div class="slide slide-dark">
+            <h2>🆚 AWS vs Azure: Certificaciones</h2>
+            <table class="comparison-table">
+                <tr>
+                    <th>Aspecto</th>
+                    <th>AWS</th>
+                    <th>Azure</th>
+                </tr>
+                <tr>
+                    <td><strong>Vigencia</strong></td>
+                    <td>3 años</td>
+                    <td>1 año (renuevan más frecuente)</td>
+                </tr>
+                <tr>
+                    <td><strong>Precio</strong></td>
+                    <td>100-300 USD</td>
+                    <td>100-165 USD (más baratas)</td>
+                </tr>
+                <tr>
+                    <td><strong>Niveles</strong></td>
+                    <td>Foundational → Associate → Professional → Specialty</td>
+                    <td>Fundamentals → Associate → Expert → Specialty</td>
+                </tr>
+                <tr>
+                    <td><strong>Dificultad</strong></td>
+                    <td>Associate y Pro son muy exigentes</td>
+                    <td>Generalmente más asequibles</td>
+                </tr>
+                <tr>
+                    <td><strong>Popularidad</strong></td>
+                    <td>Más demandadas (33% mercado)</td>
+                    <td>Creciendo (21% mercado)</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Slide 30: Recursos para estudiar -->
+        <div class="slide slide-content">
+            <h2>📚 Recursos para Prepararte</h2>
+            <div class="service-grid">
+                <div class="service-card">
+                    <h4>🎓 AWS Skill Builder</h4>
+                    <p><strong>Plataforma oficial gratuita</strong> con cursos y labs</p>
+                    <p><a href="https://skillbuilder.aws" style="color: #667eea;">skillbuilder.aws</a></p>
+                </div>
+                <div class="service-card">
+                    <h4>☁️ A Cloud Guru</h4>
+                    <p><strong>Cursos especializados</strong> en certificaciones cloud</p>
+                    <p>Muy recomendado, labs prácticos</p>
+                </div>
+                <div class="service-card">
+                    <h4>🎬 Udemy</h4>
+                    <p><strong>Cursos de Stephane Maarek</strong> y otros instructores</p>
+                    <p>Muy completos y económicos</p>
+                </div>
+                <div class="service-card">
+                    <h4>📖 Documentación AWS</h4>
+                    <p><strong>Fuente oficial</strong> de toda la información</p>
+                    <p>Imprescindible consultar</p>
+                </div>
+                <div class="service-card">
+                    <h4>🧪 AWS Free Tier</h4>
+                    <p><strong>Capa gratuita</strong> para practicar</p>
+                    <p>12 meses de servicios gratis</p>
+                </div>
+                <div class="service-card">
+                    <h4>👥 Comunidades</h4>
+                    <p><strong>Reddit, Discord, LinkedIn</strong></p>
+                    <p>Comparte dudas y experiencias</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 31: Laboratorio recomendado -->
+        <div class="slide slide-aws">
+            <h2>🧪 Recomendaciones para Laboratorio</h2>
+            <ol style="font-size: 1.3em; line-height: 2; max-width: 900px;">
+                <li><strong>Crea tu VPC</strong> con subnets públicas/privadas, IGW, NAT Gateway</li>
+                <li><strong>Despliega una app web</strong> en EC2 con ALB y Auto Scaling</li>
+                <li><strong>Almacena archivos estáticos</strong> en S3 y sírvelos con CloudFront</li>
+                <li><strong>Configura monitorización</strong> con CloudWatch (métricas y alarmas)</li>
+                <li><strong>Implementa auditoría</strong> con CloudTrail</li>
+                <li><strong>Prueba serverless</strong> con Lambda + API Gateway</li>
+                <li><strong>Crea una BD</strong>: RDS para SQL, DynamoDB para NoSQL</li>
+                <li><strong>Aplica seguridad</strong>: IAM roles, Security Groups, cifrado con KMS</li>
+            </ol>
+        </div>
+
+        <!-- Slide 32: Marco CAF -->
+        <div class="slide slide-dark">
+            <h2>🏗️ AWS Cloud Adoption Framework (CAF)</h2>
+            <p style="font-size: 1.3em; margin: 30px 0;">Marco para guiar la migración a cloud de forma estructurada</p>
+            <div class="three-columns">
+                <div class="box">
+                    <h4>💼 Negocios</h4>
+                    <p>ROI, alineación con objetivos</p>
+                </div>
+                <div class="box">
+                    <h4>👥 Personal</h4>
+                    <p>Formación y cambio cultural</p>
+                </div>
+                <div class="box">
+                    <h4>📋 Gobernanza</h4>
+                    <p>Procesos y compliance</p>
+                </div>
+                <div class="box">
+                    <h4>🏗️ Plataforma</h4>
+                    <p>Arquitectura técnica</p>
+                </div>
+                <div class="box">
+                    <h4>🔒 Seguridad</h4>
+                    <p>Protección y cumplimiento</p>
+                </div>
+                <div class="box">
+                    <h4>⚙️ Operaciones</h4>
+                    <p>Gestión del día a día</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 33: Conclusiones -->
+        <div class="slide slide-content">
+            <h2>🎯 Conclusiones Clave</h2>
+            <div class="two-columns" style="margin-top: 40px;">
+                <div>
+                    <h3>Fundamentos</h3>
+                    <ul style="font-size: 1.2em;">
+                        <li>☁️ Cloud = <strong>Infraestructura como software</strong></li>
+                        <li>💰 <strong>CAPEX → OPEX</strong>, pago por uso</li>
+                        <li>📈 <strong>Escalabilidad infinita</strong></li>
+                        <li>🌍 <strong>Alcance global</strong> en minutos</li>
+                        <li>🎯 Modelos: <strong>IaaS, PaaS, SaaS</strong></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>AWS</h3>
+                    <ul style="font-size: 1.2em;">
+                        <li>🏆 <strong>Líder</strong> con 33% de mercado</li>
+                        <li>🚀 Más de <strong>200 servicios</strong></li>
+                        <li>🗺️ Infraestructura: <strong>Regiones → AZ → CPD</strong></li>
+                        <li>🎓 Certificaciones: <strong>inversión en carrera</strong></li>
+                        <li>🧪 <strong>Práctica hands-on</strong> es esencial</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 34: Siguiente paso -->
+        <div class="slide slide-aws">
+            <h1>🚀 ¡Tu viaje Cloud comienza aquí!</h1>
+            <div class="box" style="max-width: 800px; margin: 50px 0;">
+                <h3 style="color: white; font-size: 2em;">Próximos pasos</h3>
+                <ol style="font-size: 1.4em; line-height: 2; margin-top: 30px; text-align: left;">
+                    <li>Crea tu cuenta de AWS Free Tier</li>
+                    <li>Completa los labs prácticos</li>
+                    <li>Explora la consola de AWS</li>
+                    <li>Comienza a preparar Cloud Practitioner</li>
+                </ol>
+            </div>
+            <p style="font-size: 1.5em; margin-top: 50px;">¿Preguntas? 💬</p>
+        </div>
+
+        <!-- Slide 35: Final -->
+        <div class="slide slide-title">
+            <h1>¡Gracias! 🎉</h1>
+            <h2>Fundamentos de Cloud Computing y AWS</h2>
+            <p style="font-size: 1.5em; margin-top: 80px;">☁️ La nube es el futuro</p>
+            <p style="font-size: 1.2em; margin-top: 30px; opacity: 0.9;">... y ese futuro es ahora 🚀</p>
+        </div>
+    </div>
+
+    <div class="slide-counter">
+        <span id="currentSlide">1</span> / <span id="totalSlides">35</span>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-button" id="prevBtn">← Anterior</button>
+        <button class="nav-button" id="nextBtn">Siguiente →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        document.getElementById('totalSlides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            slides[currentSlide].classList.add('prev');
+
+            currentSlide = (n + totalSlides) % totalSlides;
+
+            slides.forEach(slide => slide.classList.remove('prev'));
+            slides[currentSlide].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide + 1;
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        // Event listeners para botones
+        document.getElementById('nextBtn').addEventListener('click', nextSlide);
+        document.getElementById('prevBtn').addEventListener('click', prevSlide);
+
+        // Navegación con teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+
+        // Navegación con click (mitad izquierda/derecha)
+        document.querySelector('.presentation').addEventListener('click', (e) => {
+            const clickX = e.clientX;
+            const windowWidth = window.innerWidth;
+
+            if (clickX < windowWidth / 2) {
+                prevSlide();
+            } else {
+                nextSlide();
+            }
+        });
+
+        // Prevenir que los botones disparen el click del fondo
+        document.querySelectorAll('.nav-button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        });
+    </script>
+</body>
+</html>
