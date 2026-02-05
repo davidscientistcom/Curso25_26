@@ -346,6 +346,8 @@ primer commit
 ```bash
 git cat-file -p HEAD^{tree}
 ```
+> **ADVERTENCIA**: En windows:   git cat-file -p "HEAD^{tree}"
+
 
 Salida similar a:
 ```
