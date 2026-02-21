@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundamentos de Ciberseguridad</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/black.css">
+    <style>
+        :root {
+            --primary-color: #00d9ff;
+            --secondary-color: #ff006e;
+            --accent-color: #ffbe0b;
+            --bg-dark: #0a0e27;
+            --bg-darker: #050814;
+        }
+
+        .reveal {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+        }
+
+        .reveal h1, .reveal h2, .reveal h3 {
+            color: var(--primary-color);
+            text-transform: uppercase;
+            font-weight: 700;
+            text-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+        }
+
+        .reveal h1 {
+            font-size: 2.8em;
+            margin-bottom: 0.3em;
+        }
+
+        .reveal h2 {
+            font-size: 2em;
+            margin-bottom: 0.5em;
+        }
+
+        .reveal h3 {
+            font-size: 1.5em;
+            color: var(--accent-color);
+        }
+
+        .reveal p, .reveal li {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #e0e0e0;
+        }
+
+        .reveal ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .reveal ul li::before {
+            content: "▸ ";
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .reveal .slides section {
+            text-align: left;
+            padding: 20px;
+        }
+
+        .reveal .slides section.center {
+            text-align: center;
+        }
+
+        .highlight {
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        .accent {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .cyber-box {
+            background: rgba(0, 217, 255, 0.1);
+            border-left: 4px solid var(--primary-color);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .threat-box {
+            background: rgba(255, 0, 110, 0.1);
+            border-left: 4px solid var(--secondary-color);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .warning-box {
+            background: rgba(255, 190, 11, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .three-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: rgba(0, 217, 255, 0.15);
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid var(--primary-color);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            color: var(--primary-color);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .reveal code {
+            background: rgba(0, 217, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 3px;
+            color: var(--primary-color);
+        }
+
+        .timeline-item {
+            margin: 15px 0;
+            padding-left: 30px;
+            border-left: 2px solid var(--primary-color);
+        }
+
+        .emoji {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .reveal section img {
+            border: none;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+        }
+
+        .reveal .progress {
+            background: rgba(0, 217, 255, 0.2);
+            color: var(--primary-color);
+        }
+
+        .small-text {
+            font-size: 0.8em;
+            color: #a0a0a0;
+        }
+
+        .reveal ol {
+            list-style-position: inside;
+        }
+
+        .reveal ol li {
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            
+            <!-- Slide 1: Portada -->
+            <section class="center">
+                <h1>🔐 Fundamentos de Ciberseguridad</h1>
+                <p style="font-size: 1.5em; color: var(--accent-color);">Una Introducción Completa</p>
+                <p class="small-text">Protegiendo el mundo digital en 2026</p>
+            </section>
+
+            <!-- Slide 2: Índice General -->
+            <section>
+                <h2>📋 Contenido del Curso</h2>
+                <div class="two-columns">
+                    <div>
+                        <ul>
+                            <li>Introducción a la Ciberseguridad</li>
+                            <li>Conceptos Fundamentales</li>
+                            <li>Tipos de Amenazas</li>
+                            <li>Vectores de Ataque</li>
+                            <li>Principios de Seguridad</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <ul>
+                            <li>Tecnologías de Protección</li>
+                            <li>Problemas Actuales</li>
+                            <li>Tendencias 2026</li>
+                            <li>Carreras Profesionales</li>
+                            <li>Conclusiones</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 3: ¿Qué es la Ciberseguridad? -->
+            <section>
+                <h2>🛡️ ¿Qué es la Ciberseguridad?</h2>
+                <div class="cyber-box">
+                    <p><strong>Definición:</strong> La ciberseguridad es la práctica de <span class="highlight">proteger sistemas, redes y programas</span> de ataques digitales que tienen como objetivo acceder, cambiar o destruir información sensible.</p>
+                </div>
+                <ul>
+                    <li>Protección de datos y sistemas informáticos</li>
+                    <li>Prevención de accesos no autorizados</li>
+                    <li>Garantía de confidencialidad e integridad</li>
+                    <li>Continuidad del negocio digital</li>
+                </ul>
+            </section>
+
+            <!-- Slide 4: Historia de la Ciberseguridad -->
+            <section>
+                <h2>📜 Evolución Histórica</h2>
+                <div class="timeline-item">
+                    <strong>1970s</strong> - Primeros virus informáticos (Creeper)
+                </div>
+                <div class="timeline-item">
+                    <strong>1980s</strong> - Nacimiento del malware y primeros antivirus
+                </div>
+                <div class="timeline-item">
+                    <strong>1990s</strong> - Expansión de Internet y nuevas amenazas
+                </div>
+                <div class="timeline-item">
+                    <strong>2000s</strong> - Ataques masivos y ciberguerra
+                </div>
+                <div class="timeline-item">
+                    <strong>2010s</strong> - Ransomware, APTs y hackeo de estados
+                </div>
+                <div class="timeline-item">
+                    <strong>2020s</strong> - IA en ciberseguridad, deepfakes y amenazas autónomas
+                </div>
+            </section>
+
+            <!-- Slide 5: ¿Por qué es importante? -->
+            <section>
+                <h2>⚠️ Importancia Crítica</h2>
+                <div class="three-columns">
+                    <div class="stat-card">
+                        <span class="stat-number">40,000</span>
+                        <p>Ciberataques diarios en España</p>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">28B</span>
+                        <p>Dispositivos IoT en 2028</p>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">€4.5M</span>
+                        <p>Coste promedio de una brecha de datos</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 6: Impacto en Empresas -->
+            <section>
+                <h2>🏢 Impacto en las Empresas</h2>
+                <ul>
+                    <li><span class="highlight">Pérdidas económicas:</span> Millones en recuperación y multas</li>
+                    <li><span class="highlight">Daño reputacional:</span> Pérdida de confianza de clientes</li>
+                    <li><span class="highlight">Interrupción operativa:</span> Paralización de servicios</li>
+                    <li><span class="highlight">Robo de propiedad intelectual:</span> Ventaja competitiva perdida</li>
+                    <li><span class="highlight">Responsabilidad legal:</span> Sanciones por incumplimiento normativo</li>
+                </ul>
+            </section>
+
+            <!-- Slide 7: Triada CIA -->
+            <section>
+                <h2>🔺 La Triada CIA</h2>
+                <p style="text-align: center; font-size: 1.3em; color: var(--accent-color);">Pilares fundamentales de la seguridad de la información</p>
+                <div class="three-columns">
+                    <div class="cyber-box">
+                        <h3>Confidencialidad</h3>
+                        <p>Solo usuarios autorizados acceden a la información</p>
+                    </div>
+                    <div class="cyber-box">
+                        <h3>Integridad</h3>
+                        <p>Los datos no son alterados sin autorización</p>
+                    </div>
+                    <div class="cyber-box">
+                        <h3>Disponibilidad</h3>
+                        <p>Información accesible cuando se necesita</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 8: Otros Principios de Seguridad -->
+            <section>
+                <h2>🎯 Principios Adicionales</h2>
+                <ul>
+                    <li><span class="accent">Autenticación:</span> Verificar la identidad del usuario</li>
+                    <li><span class="accent">Autorización:</span> Permisos y privilegios de acceso</li>
+                    <li><span class="accent">No repudio:</span> Imposibilidad de negar una acción</li>
+                    <li><span class="accent">Trazabilidad:</span> Registro de acciones para auditorías</li>
+                    <li><span class="accent">Privacidad:</span> Protección de datos personales</li>
+                </ul>
+            </section>
+
+            <!-- Slide 9: Tipos de Amenazas - Introducción -->
+            <section class="center">
+                <h2>⚔️ Tipos de Amenazas Cibernéticas</h2>
+                <p style="font-size: 1.3em;">Conocer al enemigo es el primer paso para defenderse</p>
+            </section>
+
+            <!-- Slide 10: Malware -->
+            <section>
+                <h2>🦠 Malware</h2>
+                <div class="threat-box">
+                    <p><strong>Software malicioso</strong> diseñado para dañar, explotar o comprometer sistemas</p>
+                </div>
+                <div class="two-columns">
+                    <div>
+                        <h3>Tipos:</h3>
+                        <ul>
+                            <li>Virus</li>
+                            <li>Gusanos</li>
+                            <li>Troyanos</li>
+                            <li>Spyware</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Impacto:</h3>
+                        <ul>
+                            <li>Robo de datos</li>
+                            <li>Control remoto</li>
+                            <li>Destrucción de archivos</li>
+                            <li>Espionaje</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 11: Ransomware -->
+            <section>
+                <h2>💰 Ransomware</h2>
+                <div class="threat-box">
+                    <p>Malware que <span class="highlight">cifra archivos</span> y exige un rescate para restaurarlos</p>
+                </div>
+                <ul>
+                    <li><span class="accent">WannaCry (2017):</span> Afectó a 200,000 computadoras en 150 países</li>
+                    <li><span class="accent">NotPetya (2017):</span> Daños estimados en $10 mil millones</li>
+                    <li><span class="accent">Tendencia 2026:</span> Evolución hacia extorsión pura sin cifrado</li>
+                    <li><span class="accent">Nuevas tácticas:</span> Doble y triple extorsión</li>
+                </ul>
+            </section>
+
+            <!-- Slide 12: Phishing -->
+            <section>
+                <h2>🎣 Phishing</h2>
+                <div class="threat-box">
+                    <p>Técnica de <span class="highlight">ingeniería social</span> para engañar a usuarios y robar credenciales</p>
+                </div>
+                <ul>
+                    <li><span class="accent">Email phishing:</span> Correos fraudulentos</li>
+                    <li><span class="accent">Spear phishing:</span> Ataques dirigidos</li>
+                    <li><span class="accent">Whaling:</span> Objetivos de alto perfil (CEOs, directivos)</li>
+                    <li><span class="accent">Vishing:</span> Phishing por llamadas telefónicas</li>
+                    <li><span class="accent">Smishing:</span> Phishing por SMS</li>
+                </ul>
+            </section>
+
+            <!-- Slide 13: Amenazas en WhatsApp 2026 -->
+            <section>
+                <h2>📱 WhatsApp: Vector de Ataque 2026</h2>
+                <div class="warning-box">
+                    <p><strong>Nueva frontera del cibercrimen:</strong> Plataformas de mensajería como principal vector de infección</p>
+                </div>
+                <ul>
+                    <li>Troyanos distribuidos mediante mensajes falsos</li>
+                    <li>Suplantación de identidad masiva</li>
+                    <li>Propagación viral de malware</li>
+                    <li>Explotación de confianza entre contactos</li>
+                </ul>
+            </section>
+
+            <!-- Slide 14: Deepfakes y IA -->
+            <section>
+                <h2>🤖 Deepfakes e IA Maliciosa</h2>
+                <div class="threat-box">
+                    <p>Uso de <span class="highlight">inteligencia artificial</span> para crear contenido falso hiperrealista</p>
+                </div>
+                <ul>
+                    <li><span class="accent">Videos falsos:</span> Suplantación de ejecutivos para fraude</li>
+                    <li><span class="accent">Voz sintética:</span> Llamadas fraudulentas convincentes</li>
+                    <li><span class="accent">Malware adaptativo:</span> IA que evade defensas en tiempo real</li>
+                    <li><span class="accent">Campañas de desinformación:</span> Manipulación masiva</li>
+                </ul>
+            </section>
+
+            <!-- Slide 15: Ataques DDoS -->
+            <section>
+                <h2>💥 Ataques DDoS</h2>
+                <div class="cyber-box">
+                    <p><strong>Distributed Denial of Service:</strong> Saturar un sistema con tráfico masivo para dejarlo inoperativo</p>
+                </div>
+                <ul>
+                    <li>Redes botnet con miles de dispositivos infectados</li>
+                    <li>Interrupción de servicios críticos</li>
+                    <li>Chantaje: "Paga o seguimos atacando"</li>
+                    <li>Uso de dispositivos IoT vulnerables</li>
+                </ul>
+            </section>
+
+            <!-- Slide 16: Ataques de Identidad -->
+            <section>
+                <h2>🎭 Ataques Basados en Identidad</h2>
+                <div class="threat-box">
+                    <p>La <span class="highlight">identidad como superficie de ataque dominante</span> en 2026</p>
+                </div>
+                <ul>
+                    <li><span class="accent">Robo de credenciales:</span> Acceso mediante contraseñas robadas</li>
+                    <li><span class="accent">Identidades no humanas (NHI):</span> Cuentas de servicio, APIs, bots</li>
+                    <li><span class="accent">Movimiento lateral:</span> Escalada de privilegios dentro de la red</li>
+                    <li><span class="accent">Abuso de tokens:</span> Sesiones secuestradas</li>
+                </ul>
+            </section>
+
+            <!-- Slide 17: APTs -->
+            <section>
+                <h2>🎯 APT - Amenazas Persistentes Avanzadas</h2>
+                <div class="threat-box">
+                    <p>Ataques <span class="highlight">prolongados y sigilosos</span> por grupos organizados, a menudo patrocinados por estados</p>
+                </div>
+                <ul>
+                    <li>Objetivos de alto valor: gobiernos, corporaciones</li>
+                    <li>Permanencia prolongada sin detección</li>
+                    <li>Robo de información estratégica</li>
+                    <li>Espionaje industrial y político</li>
+                    <li>Grupos chinos destacan en 2026 según análisis</li>
+                </ul>
+            </section>
+
+            <!-- Slide 18: Ataques a la Cadena de Suministro -->
+            <section>
+                <h2>🔗 Ataques a la Cadena de Suministro</h2>
+                <div class="cyber-box">
+                    <p>Comprometer <span class="highlight">proveedores o software de terceros</span> para infectar múltiples objetivos</p>
+                </div>
+                <ul>
+                    <li><span class="accent">SolarWinds (2020):</span> Comprometió miles de organizaciones</li>
+                    <li>Inyección de código en librerías open source</li>
+                    <li>Efecto multiplicador: un ataque, múltiples víctimas</li>
+                </ul>
+            </section>
+
+            <!-- Slide 19: Amenazas IoT y OT -->
+            <section>
+                <h2>📡 Amenazas IoT y OT</h2>
+                <div class="warning-box">
+                    <p><strong>Internet de las Cosas y Tecnología Operacional:</strong> Superficies de ataque en expansión exponencial</p>
+                </div>
+                <ul>
+                    <li>28 mil millones de dispositivos IoT para 2028</li>
+                    <li>Cámaras, sensores y dispositivos sin protección</li>
+                    <li>Ataques a infraestructuras críticas (agua, energía)</li>
+                    <li>Manufactura, salud y logística en riesgo</li>
+                </ul>
+            </section>
+
+            <!-- Slide 20: Vectores de Ataque -->
+            <section class="center">
+                <h2>🚪 Vectores de Ataque</h2>
+                <p style="font-size: 1.3em;">¿Cómo entran los atacantes?</p>
+            </section>
+
+            <!-- Slide 21: Ingeniería Social -->
+            <section>
+                <h2>🧠 Ingeniería Social</h2>
+                <div class="threat-box">
+                    <p>Manipulación psicológica para que las personas <span class="highlight">revelen información confidencial</span></p>
+                </div>
+                <ul>
+                    <li>Explotación de la confianza humana</li>
+                    <li>Pretexting: crear escenarios falsos</li>
+                    <li>Baiting: ofrecer algo atractivo (USB infectada)</li>
+                    <li>Tailgating: seguir a alguien para acceso físico</li>
+                    <li>El eslabón más débil: el factor humano</li>
+                </ul>
+            </section>
+
+            <!-- Slide 22: Vulnerabilidades de Software -->
+            <section>
+                <h2>🐛 Vulnerabilidades de Software</h2>
+                <div class="cyber-box">
+                    <p>Errores o debilidades en el código que pueden ser <span class="highlight">explotados</span> por atacantes</p>
+                </div>
+                <ul>
+                    <li><span class="accent">Zero-day:</span> Vulnerabilidades desconocidas</li>
+                    <li><span class="accent">Buffer overflow:</span> Desbordamiento de memoria</li>
+                    <li><span class="accent">SQL Injection:</span> Inyección de código en bases de datos</li>
+                    <li><span class="accent">XSS:</span> Cross-Site Scripting en aplicaciones web</li>
+                </ul>
+            </section>
+
+            <!-- Slide 23: Contraseñas Débiles -->
+            <section>
+                <h2>🔑 Contraseñas Débiles</h2>
+                <div class="two-columns">
+                    <div>
+                        <h3>Errores comunes:</h3>
+                        <ul>
+                            <li>123456, password</li>
+                            <li>Fechas de nacimiento</li>
+                            <li>Nombres de mascotas</li>
+                            <li>Misma contraseña en múltiples sitios</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Buenas prácticas:</h3>
+                        <ul>
+                            <li>Mínimo 12 caracteres</li>
+                            <li>Mezcla de caracteres</li>
+                            <li>Gestor de contraseñas</li>
+                            <li>Autenticación multifactor</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 24: Redes WiFi Inseguras -->
+            <section>
+                <h2>📶 Redes WiFi Inseguras</h2>
+                <div class="threat-box">
+                    <p>Redes públicas sin cifrado: <span class="highlight">puerta abierta</span> para interceptar comunicaciones</p>
+                </div>
+                <ul>
+                    <li>Cafeterías, aeropuertos, hoteles</li>
+                    <li>Man-in-the-Middle (MITM): interceptación de datos</li>
+                    <li>Redes falsas (Evil Twin)</li>
+                    <li>Solución: usar VPN en redes públicas</li>
+                </ul>
+            </section>
+
+            <!-- Slide 25: Dispositivos Sin Actualizar -->
+            <section>
+                <h2>🔄 Dispositivos Sin Actualizar</h2>
+                <div class="warning-box">
+                    <p>Los parches de seguridad son <span class="highlight">críticos</span> para corregir vulnerabilidades conocidas</p>
+                </div>
+                <ul>
+                    <li>Sistemas operativos obsoletos</li>
+                    <li>Software sin parches de seguridad</li>
+                    <li>Firmware de dispositivos IoT nunca actualizado</li>
+                    <li>Ventana de oportunidad para atacantes</li>
+                </ul>
+            </section>
+
+            <!-- Slide 26: Defensa en Profundidad -->
+            <section class="center">
+                <h2>🛡️ Estrategias de Protección</h2>
+                <p style="font-size: 1.3em;">Defensa en múltiples capas</p>
+            </section>
+
+            <!-- Slide 27: Modelo Zero Trust -->
+            <section>
+                <h2>🚫 Modelo Zero Trust</h2>
+                <div class="cyber-box">
+                    <p><strong>Principio:</strong> "Nunca confíes, siempre verifica" - <span class="highlight">Ningún usuario o dispositivo es confiable por defecto</span></p>
+                </div>
+                <ul>
+                    <li>Verificación continua de identidad</li>
+                    <li>Acceso basado en contexto y riesgo</li>
+                    <li>Microsegmentación de redes</li>
+                    <li>Estándar consolidado en 2026 para nube híbrida</li>
+                    <li>Reemplazo acelerado de VPNs tradicionales</li>
+                </ul>
+            </section>
+
+            <!-- Slide 28: Firewalls -->
+            <section>
+                <h2>🔥 Firewalls</h2>
+                <div class="cyber-box">
+                    <p>Barrera de seguridad que <span class="highlight">filtra el tráfico</span> entre redes según reglas predefinidas</p>
+                </div>
+                <div class="two-columns">
+                    <div>
+                        <h3>Tipos:</h3>
+                        <ul>
+                            <li>Firewall de red</li>
+                            <li>Firewall de aplicación (WAF)</li>
+                            <li>Next-Gen Firewall (NGFW)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Funciones:</h3>
+                        <ul>
+                            <li>Bloquear tráfico malicioso</li>
+                            <li>Inspección de paquetes</li>
+                            <li>Prevención de intrusiones</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 29: Antivirus y Antimalware -->
+            <section>
+                <h2>🦠 Antivirus y Antimalware</h2>
+                <ul>
+                    <li><span class="accent">Detección por firmas:</span> Identificar malware conocido</li>
+                    <li><span class="accent">Análisis heurístico:</span> Detectar comportamiento sospechoso</li>
+                    <li><span class="accent">Sandboxing:</span> Ejecutar archivos en entorno aislado</li>
+                    <li><span class="accent">Protección en tiempo real:</span> Monitoreo continuo</li>
+                    <li><span class="accent">Actualización constante:</span> Base de datos de amenazas</li>
+                </ul>
+            </section>
+
+            <!-- Slide 30: Cifrado -->
+            <section>
+                <h2>🔐 Cifrado</h2>
+                <div class="cyber-box">
+                    <p>Transformar información en un formato <span class="highlight">ilegible sin la clave correcta</span></p>
+                </div>
+                <ul>
+                    <li><span class="accent">Simétrico:</span> Misma clave (AES)</li>
+                    <li><span class="accent">Asimétrico:</span> Par claves pública/privada (RSA)</li>
+                    <li><span class="accent">HTTPS:</span> Web cifrada (SSL/TLS)</li>
+                    <li><span class="accent">Amenaza cuántica:</span> Computación cuántica vs cifrado actual</li>
+                </ul>
+            </section>
+
+            <!-- Slide 31: Autenticación Multifactor (MFA) -->
+            <section>
+                <h2>🔐 Autenticación Multifactor (MFA)</h2>
+                <div class="cyber-box">
+                    <p>Requerir <span class="highlight">múltiples formas de verificación</span> para acceder a un sistema</p>
+                </div>
+                <div class="three-columns">
+                    <div class="warning-box">
+                        <h3>Algo que sabes</h3>
+                        <p>Contraseña, PIN</p>
+                    </div>
+                    <div class="warning-box">
+                        <h3>Algo que tienes</h3>
+                        <p>Token, móvil, tarjeta</p>
+                    </div>
+                    <div class="warning-box">
+                        <h3>Algo que eres</h3>
+                        <p>Huella, rostro, iris</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 32: VPNs y SASE -->
+            <section>
+                <h2>🌐 VPN y SASE</h2>
+                <div class="two-columns">
+                    <div>
+                        <h3>VPN Tradicional</h3>
+                        <ul>
+                            <li>Túnel cifrado</li>
+                            <li>Oculta dirección IP</li>
+                            <li>Acceso remoto seguro</li>
+                            <li>En declive gradual</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>SASE (2026)</h3>
+                        <ul>
+                            <li>Secure Access Service Edge</li>
+                            <li>Convergencia red + seguridad</li>
+                            <li>Basado en la nube</li>
+                            <li>Futuro del acceso seguro</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 33: Sistemas de Detección (IDS/IPS) -->
+            <section>
+                <h2>👁️ IDS/IPS</h2>
+                <div class="cyber-box">
+                    <p>Sistemas para <span class="highlight">detectar y prevenir intrusiones</span> en tiempo real</p>
+                </div>
+                <ul>
+                    <li><span class="accent">IDS (Intrusion Detection System):</span> Detecta y alerta</li>
+                    <li><span class="accent">IPS (Intrusion Prevention System):</span> Detecta y bloquea</li>
+                    <li>Análisis de patrones de tráfico anómalos</li>
+                    <li>Integración con SIEM para correlación de eventos</li>
+                </ul>
+            </section>
+
+            <!-- Slide 34: SIEM y SOC -->
+            <section>
+                <h2>📊 SIEM y SOC</h2>
+                <div class="two-columns">
+                    <div class="cyber-box">
+                        <h3>SIEM</h3>
+                        <p>Security Information and Event Management</p>
+                        <ul>
+                            <li>Agregación de logs</li>
+                            <li>Correlación de eventos</li>
+                            <li>Alertas en tiempo real</li>
+                        </ul>
+                    </div>
+                    <div class="cyber-box">
+                        <h3>SOC</h3>
+                        <p>Security Operations Center</p>
+                        <ul>
+                            <li>Equipo de analistas</li>
+                            <li>Monitoreo 24/7</li>
+                            <li>Respuesta a incidentes</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 35: IA en Ciberseguridad -->
+            <section>
+                <h2>🤖 IA en Ciberseguridad</h2>
+                <div class="warning-box">
+                    <p><strong>Revolución 2026:</strong> <span class="highlight">IA agéntica autónoma</span> para defensa y ataque</p>
+                </div>
+                <ul>
+                    <li><span class="accent">Defensa:</span> Detección de anomalías, respuesta automatizada</li>
+                    <li><span class="accent">UEBA:</span> Análisis de comportamiento</li>
+                    <li><span class="accent">Amenaza:</span> IA maliciosa adaptativa</li>
+                    <li><span class="accent">Carrera armamentista:</span> IA vs IA</li>
+                </ul>
+            </section>
+
+            <!-- Slide 36: Backups y Recuperación -->
+            <section>
+                <h2>💾 Backups y Recuperación</h2>
+                <div class="cyber-box">
+                    <p>Regla <span class="highlight">3-2-1:</span> 3 copias, 2 tipos de medios, 1 offsite</p>
+                </div>
+                <ul>
+                    <li><span class="accent">Backups inmutables:</span> Protección vs ransomware</li>
+                    <li><span class="accent">Pruebas regulares:</span> Verificar restauración</li>
+                    <li><span class="accent">RTO y RPO:</span> Objetivos de recuperación</li>
+                </ul>
+            </section>
+
+            <!-- Slide 37: Segmentación de Redes -->
+            <section>
+                <h2>🧩 Segmentación de Redes</h2>
+                <div class="cyber-box">
+                    <p>Dividir la red en <span class="highlight">zonas aisladas</span> para limitar el movimiento lateral</p>
+                </div>
+                <ul>
+                    <li>Contener el alcance de una brecha</li>
+                    <li>Microsegmentación: aislamiento granular</li>
+                    <li>Separar entornos (producción, desarrollo, DMZ)</li>
+                    <li>VLANs y subredes con políticas estrictas</li>
+                </ul>
+            </section>
+
+            <!-- Slide 38: Gestión de Parches -->
+            <section>
+                <h2>🔧 Gestión de Parches</h2>
+                <div class="warning-box">
+                    <p>Los parches cierran puertas - <span class="highlight">NO actualizar es negligencia</span></p>
+                </div>
+                <ul>
+                    <li>Inventario completo de activos</li>
+                    <li>Priorización según criticidad</li>
+                    <li>Automatización cuando sea posible</li>
+                    <li>Verificación post-actualización</li>
+                </ul>
+            </section>
+
+            <!-- Slide 39: Problemas Actuales 2026 -->
+            <section class="center">
+                <h2>⚠️ Problemas Actuales de Ciberseguridad</h2>
+                <p style="font-size: 1.3em;">Desafíos del mundo real en 2026</p>
+            </section>
+
+            <!-- Slide 40: Escasez de Talento -->
+            <section>
+                <h2>👨‍💻 Brecha de Talento</h2>
+                <div class="threat-box">
+                    <p>Millones de posiciones de ciberseguridad <span class="highlight">sin cubrir</span> a nivel mundial</p>
+                </div>
+                <ul>
+                    <li>Demanda creciente vs oferta limitada</li>
+                    <li>Necesidad de formación continua</li>
+                    <li>Burnout en equipos de seguridad</li>
+                    <li>Automatización como solución parcial</li>
+                </ul>
+            </section>
+
+            <!-- Slide 41: Complejidad de la Infraestructura -->
+            <section>
+                <h2>🌐 Infraestructura Compleja</h2>
+                <ul>
+                    <li><span class="accent">Multicloud:</span> AWS, Azure, GCP simultáneamente</li>
+                    <li><span class="accent">Híbrido:</span> On-premise + nube</li>
+                    <li><span class="accent">Shadow IT:</span> Servicios no autorizados</li>
+                    <li><span class="accent">Superficie expandida:</span> Más puntos vulnerables</li>
+                </ul>
+            </section>
+
+            <!-- Slide 42: Cumplimiento Normativo -->
+            <section>
+                <h2>📜 Cumplimiento Normativo</h2>
+                <div class="cyber-box">
+                    <p>Regulaciones cada vez más <span class="highlight">estrictas y costosas</span></p>
+                </div>
+                <ul>
+                    <li><span class="accent">GDPR:</span> Protección datos Europa (multas €20M)</li>
+                    <li><span class="accent">LOPDGDD:</span> Ley española protección datos</li>
+                    <li><span class="accent">NIS2:</span> Directiva seguridad de redes</li>
+                    <li>Auditorías constantes y documentación exhaustiva</li>
+                </ul>
+            </section>
+
+            <!-- Slide 43: Ataques Sofisticados -->
+            <section>
+                <h2>🎯 Sofisticación Creciente</h2>
+                <div class="threat-box">
+                    <p>Los atacantes evolucionan más rápido que las defensas</p>
+                </div>
+                <ul>
+                    <li>Malware polimórfico que cambia su firma</li>
+                    <li>Living-off-the-land: herramientas legítimas</li>
+                    <li>Ataques sin archivos (fileless malware)</li>
+                    <li>IA generando ataques personalizados</li>
+                </ul>
+            </section>
+
+            <!-- Slide 44: Costes Crecientes -->
+            <section>
+                <h2>💸 Costes en Aumento</h2>
+                <div class="three-columns">
+                    <div class="stat-card">
+                        <span class="stat-number">€4.5M</span>
+                        <p>Coste medio de una brecha de datos</p>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">287 días</span>
+                        <p>Tiempo promedio para detectar y contener</p>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">+15%</span>
+                        <p>Incremento anual en inversión de seguridad</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 45: Tendencias 2026 -->
+            <section>
+                <h2>🔮 Tendencias Ciberseguridad 2026</h2>
+                <ul>
+                    <li><span class="highlight">Resiliencia autónoma:</span> Sistemas auto-reparables</li>
+                    <li><span class="highlight">Identidad como perímetro:</span> Protección centrada en usuarios</li>
+                    <li><span class="highlight">SSE y SASE:</span> Seguridad en borde de nube</li>
+                    <li><span class="highlight">Criptografía post-cuántica:</span> Preparación era cuántica</li>
+                </ul>
+            </section>
+
+            <!-- Slide 46: ¿Por Qué Estudiar Ciberseguridad? -->
+            <section>
+                <h2>🎓 ¿Por Qué Estudiar Ciberseguridad?</h2>
+                <div class="two-columns">
+                    <div>
+                        <h3>Oportunidades:</h3>
+                        <ul>
+                            <li>Alta demanda laboral</li>
+                            <li>Salarios competitivos</li>
+                            <li>Trabajo remoto</li>
+                            <li>Diversidad de roles</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Impacto:</h3>
+                        <ul>
+                            <li>Proteger infraestructuras críticas</li>
+                            <li>Defender privacidad</li>
+                            <li>Combatir el cibercrimen</li>
+                            <li>Construir un mundo digital más seguro</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 47: Carreras en Ciberseguridad -->
+            <section>
+                <h2>💼 Carreras Profesionales</h2>
+                <ul>
+                    <li><span class="accent">Analista de Seguridad:</span> Monitoreo y detección</li>
+                    <li><span class="accent">Pentester:</span> Pruebas de penetración</li>
+                    <li><span class="accent">Ingeniero de Seguridad:</span> Implementación</li>
+                    <li><span class="accent">Analista Forense:</span> Investigación de incidentes</li>
+                    <li><span class="accent">Arquitecto de Seguridad:</span> Diseño infraestructuras</li>
+                    <li><span class="accent">CISO:</span> Chief Information Security Officer</li>
+                </ul>
+            </section>
+
+            <!-- Slide 48: Certificaciones Recomendadas -->
+            <section>
+                <h2>🏆 Certificaciones</h2>
+                <div class="two-columns">
+                    <div>
+                        <h3>Nivel Básico:</h3>
+                        <ul>
+                            <li>CompTIA Security+</li>
+                            <li>CEH (Certified Ethical Hacker)</li>
+                            <li>GISF</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Nivel Avanzado:</h3>
+                        <ul>
+                            <li>CISSP</li>
+                            <li>OSCP</li>
+                            <li>CISM</li>
+                            <li>SANS GIAC</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 49: Conclusiones -->
+            <section>
+                <h2>✅ Conclusiones</h2>
+                <ul>
+                    <li>La ciberseguridad es <span class="highlight">esencial</span> en el mundo digital</li>
+                    <li>Las amenazas evolucionan constantemente</li>
+                    <li>La defensa requiere <span class="accent">enfoque multicapa</span></li>
+                    <li>Formación continua <span class="accent">obligatoria</span></li>
+                    <li>2026: era de IA, Zero Trust e identidad</li>
+                    <li>Gran demanda profesional y futuro prometedor</li>
+                </ul>
+            </section>
+
+            <!-- Slide 50: Final -->
+            <section class="center">
+                <h1>🔐 Gracias</h1>
+                <p style="font-size: 2em; color: var(--accent-color);">¿Preguntas?</p>
+                <p class="small-text">La ciberseguridad no es un destino, es un viaje continuo</p>
+                <br>
+                <p style="font-size: 0.9em; color: var(--primary-color);">
+                    🌐 Mantente actualizado | 🛡️ Protege tu mundo digital | 🚀 El futuro es ahora
+                </p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            backgroundTransition: 'fade',
+            slideNumber: true,
+            progress: true,
+            center: false,
+            controlsTutorial: true,
+            controls: true,
+            keyboard: true,
+            overview: true,
+            touch: true,
+            loop: false,
+            rtl: false,
+            navigationMode: 'default',
+            shuffle: false,
+            fragments: true,
+            fragmentInURL: true,
+            embedded: false,
+            help: true,
+            showNotes: false,
+            autoPlayMedia: null,
+            preloadIframes: null,
+            autoSlide: 0,
+            autoSlideStoppable: true,
+            mouseWheel: false,
+            hideInactiveCursor: true,
+            hideCursorTime: 5000,
+            previewLinks: false,
+            width: 960,
+            height: 700,
+            margin: 0.04,
+            minScale: 0.2,
+            maxScale: 2.0
+        });
+    </script>
+</body>
+</html>
+
