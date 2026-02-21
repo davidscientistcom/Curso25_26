@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bootcamp Ciberseguridad - 2h Intensivo</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/black.min.css">
+<style>
+:root {
+  --color-primary: #00d9ff;
+  --color-danger: #ff006e;
+  --color-warning: #ffbe0b;
+  --color-success: #06ffa5;
+}
+.reveal {
+  font-size: 28px;
+}
+.reveal .slides {
+    text-align: left;
+    /* Añade esta línea: */
+    top: 0 !important;
+}
+
+.reveal .slides section {
+    height: 100%;
+    /* Añade estas líneas: */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start !important;
+    padding-top: 400px !important; /* Ajusta este valor a tu gusto */
+}
+
+.reveal h1 {
+  color: var(--color-primary);
+  text-transform: uppercase;
+  font-size: 2.5em;
+  margin-bottom: 0.5em;
+}
+.reveal h2 {
+  color: var(--color-primary);
+  font-size: 2em;
+  margin-bottom: 0.8em;
+}
+.reveal h3 {
+  color: var(--color-success);
+  font-size: 1.5em;
+  margin-top: 0.8em;
+  margin-bottom: 0.5em;
+}
+.reveal ul {
+  line-height: 1.6;
+}
+.reveal li {
+  margin-bottom: 0.5em;
+}
+.highlight-red {
+  color: var(--color-danger);
+  font-weight: bold;
+}
+.highlight-yellow {
+  color: var(--color-warning);
+  font-weight: bold;
+}
+.highlight-cyan {
+  color: var(--color-primary);
+  font-weight: bold;
+}
+.highlight-green {
+  color: var(--color-success);
+  font-weight: bold;
+}
+.small-text {
+  font-size: 0.8em;
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  text-align: left;
+}
+.box {
+  background: rgba(0, 217, 255, 0.1);
+  border: 2px solid var(--color-primary);
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+.box-danger {
+  background: rgba(255, 0, 110, 0.1);
+  border: 2px solid var(--color-danger);
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+.box-warning {
+  background: rgba(255, 190, 11, 0.1);
+  border: 2px solid var(--color-warning);
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+</style>
+</head>
+<body>
+
+<div class="reveal">
+<div class="slides">
+
+<!-- SLIDE 1: PORTADA -->
+<section>
+  <h1>Bootcamp Ciberseguridad</h1>
+  <h3>Introducción Intensiva </h3>
+  <p style="margin-top: 2em; font-size: 0.9em;">De cero a entender el mundo de la ciberseguridad profesional</p>
+</section>
+
+<!-- SLIDE 2: QUÉ VAMOS A VER -->
+<section>
+  <h2>¿Qué vamos a ver hoy?</h2>
+  <ul>
+    <li><span class="highlight-cyan">Fundamentos de ciberseguridad</span> - Conceptos clave, tríada CIA</li>
+    <li><span class="highlight-red">Amenazas y ataques</span> - Tipos, técnicas, ejemplos reales</li>
+    <li><span class="highlight-yellow">Vectores de ataque</span> - Por dónde atacan los cibercriminales</li>
+    <li><span class="highlight-green">Marco legal</span> - GDPR, NIS2, ENS, responsabilidades</li>
+    <li><span class="highlight-cyan">Ofensiva vs Defensiva</span> - Red Team, Blue Team, herramientas</li>
+  </ul>
+</section>
+
+<!-- BLOQUE 1: FUNDAMENTOS -->
+<section>
+  <h1>1. Fundamentos</h1>
+  <h3>¿Qué es la ciberseguridad?</h3>
+</section>
+
+<!-- SLIDE 3: DEFINICIÓN -->
+<section>
+  <h2>¿Qué es la Ciberseguridad?</h2>
+  <div class="box">
+    <p><strong>Definición:</strong> Conjunto de prácticas, tecnologías y procesos diseñados para proteger sistemas, redes, programas y datos de ataques digitales, daños o accesos no autorizados.</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-cyan">Protección de activos digitales</span> - Datos, sistemas, infraestructuras</li>
+    <li><span class="highlight-green">Gestión de riesgos</span> - Identificar, evaluar, mitigar amenazas</li>
+    <li><span class="highlight-yellow">Respuesta a incidentes</span> - Detectar, contener, recuperar</li>
+    <li><span class="highlight-red">Cumplimiento normativo</span> - Leyes, regulaciones, estándares</li>
+  </ul>
+</section>
+
+<!-- SLIDE 4: POR QUÉ IMPORTA -->
+<section>
+  <h2>¿Por qué importa?</h2>
+  <div class="grid-2">
+    <div>
+      <h3>Impacto económico</h3>
+      <ul class="small-text">
+        <li>Coste medio ataque: <span class="highlight-red">4.45M€</span></li>
+        <li>Ransomware: <span class="highlight-red">20 mil millones €/año</span></li>
+        <li>Robo de datos: multas de <span class="highlight-yellow">millones</span></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Impacto operativo</h3>
+      <ul class="small-text">
+        <li>Parada de servicios críticos</li>
+        <li>Pérdida de confianza de clientes</li>
+        <li>Daño reputacional permanente</li>
+      </ul>
+    </div>
+  </div>
+  <p class="small-text" style="margin-top: 1.5em;"><span class="highlight-cyan">Demanda profesional:</span> Déficit de <strong>3.5 millones</strong> de profesionales de ciberseguridad a nivel mundial en 2025</p>
+</section>
+
+<!-- SLIDE 5: TRÍADA CIA -->
+<section>
+  <h2>Tríada CIA - Pilar Fundamental</h2>
+  <div class="box">
+    <p><strong>CIA = Confidentiality, Integrity, Availability</strong></p>
+    <p>Los tres principios básicos que sostienen toda la seguridad de la información</p>
+  </div>
+  <div class="grid-2 small-text">
+    <div>
+      <h3 style="color: #00d9ff;">Confidencialidad</h3>
+      <p>Solo personas autorizadas acceden a la información</p>
+    </div>
+    <div>
+      <h3 style="color: #06ffa5;">Integridad</h3>
+      <p>Los datos son precisos y no han sido modificados</p>
+    </div>
+  </div>
+  <div style="margin-top: 1em;">
+    <h3 style="color: #ffbe0b;">Disponibilidad</h3>
+    <p class="small-text">Los sistemas y datos están accesibles cuando se necesitan</p>
+  </div>
+</section>
+
+<!-- SLIDE 6: CONFIDENCIALIDAD -->
+<section>
+  <h2>Confidencialidad</h2>
+  <p class="small-text">Garantizar que la información solo es accesible para quienes tienen autorización</p>
+  <div class="box-danger">
+    <h3>Amenazas típicas:</h3>
+    <ul class="small-text">
+      <li><span class="highlight-red">Ataques Man-in-the-Middle (MITM)</span> - Interceptación de comunicaciones</li>
+      <li><span class="highlight-red">Robo de credenciales</span> - Phishing, keyloggers, dumps de bases de datos</li>
+      <li><span class="highlight-red">Acceso no autorizado</span> - Escalada de privilegios, exploits</li>
+      <li><span class="highlight-red">Fuga de datos</span> - Exfiltración de información sensible</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h3>Controles:</h3>
+    <ul class="small-text">
+      <li>Cifrado (TLS/SSL, AES, RSA)</li>
+      <li>Control de acceso (RBAC, IAM)</li>
+      <li>Autenticación multifactor (MFA)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- SLIDE 7: INTEGRIDAD -->
+<section>
+  <h2>Integridad</h2>
+  <p class="small-text">Asegurar que los datos son exactos, completos y no han sido alterados de forma no autorizada</p>
+  <div class="box-danger">
+    <h3>Amenazas típicas:</h3>
+    <ul class="small-text">
+      <li><span class="highlight-red">Modificación de datos</span> - Inyecciones SQL, XSS</li>
+      <li><span class="highlight-red">Alteración de logs</span> - Ocultar rastros de ataques</li>
+      <li><span class="highlight-red">Malware</span> - Troyanos que modifican archivos del sistema</li>
+      <li><span class="highlight-red">Manipulación de configuraciones</span> - Backdoors, persistencia</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h3>Controles:</h3>
+    <ul class="small-text">
+      <li>Hashing (SHA-256, checksums)</li>
+      <li>Firmas digitales</li>
+      <li>Sistemas de detección de intrusiones (IDS)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- SLIDE 8: DISPONIBILIDAD -->
+<section>
+  <h2>Disponibilidad</h2>
+  <p class="small-text">Garantizar que sistemas y datos estén accesibles cuando usuarios autorizados los necesiten</p>
+  <div class="box-danger">
+    <h3>Amenazas típicas:</h3>
+    <ul class="small-text">
+      <li><span class="highlight-red">DDoS (Distributed Denial of Service)</span> - Saturación de recursos</li>
+      <li><span class="highlight-red">Ransomware</span> - Cifrado de datos y rescate económico</li>
+      <li><span class="highlight-red">Sabotaje</span> - Destrucción física o lógica de infraestructura</li>
+      <li><span class="highlight-red">Fallos de hardware</span> - Sin redundancia ni backups</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h3>Controles:</h3>
+    <ul class="small-text">
+      <li>Redundancia y alta disponibilidad (HA)</li>
+      <li>Backups automáticos (regla 3-2-1)</li>
+      <li>Planes de continuidad (BCP/DRP)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- SLIDE 9: CONCEPTOS CLAVE I -->
+<section>
+  <h2>Conceptos Clave (I)</h2>
+  <ul class="small-text">
+    <li><span class="highlight-cyan">Amenaza (Threat):</span> Potencial causa de daño - hacker, malware, desastre natural</li>
+    <li><span class="highlight-cyan">Vulnerabilidad (Vulnerability):</span> Debilidad que puede ser explotada - bug de software, mala configuración</li>
+    <li><span class="highlight-cyan">Riesgo (Risk):</span> Probabilidad de que una amenaza explote una vulnerabilidad</li>
+    <li><span class="highlight-cyan">Exploit:</span> Código/técnica que aprovecha una vulnerabilidad específica</li>
+    <li><span class="highlight-cyan">Payload:</span> Código malicioso que se ejecuta tras explotar vulnerabilidad</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Fórmula: Riesgo = Amenaza × Vulnerabilidad × Impacto</strong></p>
+  </div>
+</section>
+
+<!-- SLIDE 10: CONCEPTOS CLAVE II -->
+<section>
+  <h2>Conceptos Clave (II)</h2>
+  <ul class="small-text">
+    <li><span class="highlight-cyan">Vector de ataque:</span> Método/camino usado para comprometer un sistema (email, USB, web, red)</li>
+    <li><span class="highlight-cyan">Superficie de ataque:</span> Suma de todos los puntos donde un atacante puede intentar entrar</li>
+    <li><span class="highlight-cyan">Zero-day:</span> Vulnerabilidad desconocida por el fabricante, sin parche disponible</li>
+    <li><span class="highlight-cyan">APT (Advanced Persistent Threat):</span> Ataque sofisticado y prolongado por actores con muchos recursos</li>
+    <li><span class="highlight-cyan">IOC (Indicator of Compromise):</span> Evidencia de que un sistema ha sido comprometido</li>
+  </ul>
+</section>
+
+<!-- SLIDE 11: CONCEPTOS CLAVE III -->
+<section>
+  <h2>Conceptos Clave (III)</h2>
+  <ul class="small-text">
+    <li><span class="highlight-cyan">Hardening:</span> Proceso de asegurar un sistema reduciendo su superficie de ataque</li>
+    <li><span class="highlight-cyan">Sandboxing:</span> Aislar aplicaciones en entornos controlados para analizar comportamiento</li>
+    <li><span class="highlight-cyan">Honeypot:</span> Sistema trampa para atraer atacantes y estudiar sus técnicas</li>
+    <li><span class="highlight-cyan">Lateral movement:</span> Movimiento del atacante dentro de una red tras compromiso inicial</li>
+    <li><span class="highlight-cyan">Privilege escalation:</span> Obtener permisos superiores a los inicialmente comprometidos</li>
+  </ul>
+</section>
+
+<!-- SLIDE 12: ACTORES DE AMENAZAS -->
+<section>
+  <h2>Actores de Amenazas</h2>
+  <div class="grid-2 small-text">
+    <div class="box-danger">
+      <h3>Por motivación</h3>
+      <ul>
+        <li><strong>Cibercriminales:</strong> Dinero (ransomware, fraude)</li>
+        <li><strong>Hacktivistas:</strong> Ideología política/social</li>
+        <li><strong>Estados-nación:</strong> Espionaje, sabotaje</li>
+        <li><strong>Insiders:</strong> Empleados descontentos</li>
+      </ul>
+    </div>
+    <div class="box-warning">
+      <h3>Por sofisticación</h3>
+      <ul>
+        <li><strong>Script kiddies:</strong> Herramientas automatizadas</li>
+        <li><strong>Cibercriminales organizados:</strong> Ransomware-as-a-Service</li>
+        <li><strong>APT groups:</strong> Recursos ilimitados, objetivos específicos</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 13: DEFENSA EN PROFUNDIDAD -->
+<section>
+  <h2>Defensa en Profundidad</h2>
+  <p class="small-text">Estrategia de seguridad por capas - si una falla, otras protegen</p>
+  <ul class="small-text">
+    <li><span class="highlight-cyan">Capa 1 - Física:</span> Control de acceso a instalaciones, cámaras, guardias</li>
+    <li><span class="highlight-cyan">Capa 2 - Perimetral:</span> Firewalls, IPS/IDS, VPN, segmentación de red</li>
+    <li><span class="highlight-cyan">Capa 3 - Red interna:</span> NAC, VLANs, microsegmentación</li>
+    <li><span class="highlight-cyan">Capa 4 - Endpoint:</span> Antimalware, EDR, hardening de SO</li>
+    <li><span class="highlight-cyan">Capa 5 - Aplicación:</span> WAF, validación de inputs, SAST/DAST</li>
+    <li><span class="highlight-cyan">Capa 6 - Datos:</span> Cifrado, DLP, clasificación</li>
+    <li><span class="highlight-cyan">Capa 7 - Humana:</span> Formación, concienciación, políticas</li>
+  </ul>
+</section>
+
+<!-- SLIDE 14: KILL CHAIN -->
+<section>
+  <h2>Cyber Kill Chain (Lockheed Martin)</h2>
+  <p class="small-text">Modelo de 7 fases que describe un ataque cibernético típico</p>
+  <ol class="small-text">
+    <li><span class="highlight-red">Reconnaissance:</span> Recopilación de información sobre el objetivo</li>
+    <li><span class="highlight-red">Weaponization:</span> Creación de payload + exploit</li>
+    <li><span class="highlight-red">Delivery:</span> Envío del arma (email, USB, web)</li>
+    <li><span class="highlight-red">Exploitation:</span> Ejecución del exploit</li>
+    <li><span class="highlight-red">Installation:</span> Instalación de backdoor/malware</li>
+    <li><span class="highlight-red">Command & Control (C2):</span> Comunicación con servidor del atacante</li>
+    <li><span class="highlight-red">Actions on Objectives:</span> Robo de datos, cifrado, sabotaje</li>
+  </ol>
+  <p class="small-text" style="margin-top: 1em;"><span class="highlight-green">Objetivo defensivo:</span> Romper la cadena en la fase más temprana posible</p>
+</section>
+
+<!-- SLIDE 15: MITRE ATT&CK -->
+<section>
+  <h2>MITRE ATT&CK Framework</h2>
+  <div class="box">
+    <p><strong>Base de conocimiento de tácticas y técnicas usadas por adversarios reales</strong></p>
+  </div>
+  <ul class="small-text">
+    <li>Contiene <span class="highlight-cyan">14 tácticas</span> (objetivos) y <span class="highlight-cyan">+200 técnicas</span> (métodos)</li>
+    <li>Basado en observaciones del mundo real</li>
+    <li>Usado para: threat hunting, detección, evaluación de defensas, red teaming</li>
+  </ul>
+  <div class="box-warning" style="margin-top: 1em;">
+    <p><strong>Ejemplo tácticas:</strong> Initial Access, Execution, Persistence, Privilege Escalation, Defense Evasion, Credential Access, Discovery, Lateral Movement, Collection, Exfiltration, Impact</p>
+  </div>
+</section>
+
+<!-- BLOQUE 2: AMENAZAS Y ATAQUES -->
+<section>
+  <h1>2. Amenazas y Ataques</h1>
+  <h3>El panorama de las ciberamenazas</h3>
+</section>
+
+<!-- SLIDE 16: CLASIFICACIÓN DE ATAQUES -->
+<section>
+  <h2>Clasificación de Ataques</h2>
+  <div class="grid-2 small-text">
+    <div>
+      <h3>Por objetivo CIA</h3>
+      <ul>
+        <li>Confidencialidad: Espionaje, robo de datos</li>
+        <li>Integridad: Modificación, sabotaje</li>
+        <li>Disponibilidad: DDoS, ransomware</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Por tipo de activo</h3>
+      <ul>
+        <li>Red: MITM, sniffing, spoofing</li>
+        <li>Aplicación: Inyecciones, XSS</li>
+        <li>Sistema: Malware, rootkits</li>
+        <li>Humano: Ingeniería social</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 17: MALWARE - DEFINICIÓN -->
+<section>
+  <h2>Malware - Software Malicioso</h2>
+  <div class="box-danger">
+    <p><strong>Malware:</strong> Cualquier software diseñado para dañar, explotar o comprometer un sistema sin consentimiento del usuario</p>
+  </div>
+  <p class="small-text">Categorías principales según comportamiento y objetivos:</p>
+  <ul class="small-text">
+    <li>Virus, Gusanos, Troyanos</li>
+    <li>Ransomware, Spyware, Adware</li>
+    <li>Rootkits, Botnets, Fileless malware</li>
+  </ul>
+</section>
+
+<!-- SLIDE 18: VIRUS -->
+<section>
+  <h2>Virus</h2>
+  <div class="box-danger">
+    <p><strong>Definición:</strong> Código malicioso que se adjunta a archivos legítimos y se replica infectando otros archivos cuando se ejecuta</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-red">Requiere acción del usuario</span> para ejecutarse (abrir archivo infectado)</li>
+    <li><span class="highlight-yellow">Se propaga:</span> Por medios extraíbles, adjuntos de email, descargas</li>
+    <li><span class="highlight-cyan">Tipos:</span> Boot sector virus, Macro virus, File infector virus</li>
+    <li><span class="highlight-green">Detección:</span> Firmas, análisis heurístico, sandboxing</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Ejemplo histórico:</strong> ILOVEYOU (2000) - infectó 50M de PCs, daño estimado 15 mil millones $</p>
+  </div>
+</section>
+
+<!-- SLIDE 19: GUSANOS -->
+<section>
+  <h2>Gusanos (Worms)</h2>
+  <div class="box-danger">
+    <p><strong>Definición:</strong> Malware autorreplicante que se propaga automáticamente por la red sin intervención humana</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-red">No necesita archivo host</span> - se propaga por sí mismo</li>
+    <li><span class="highlight-yellow">Explota vulnerabilidades de red</span> para infectar otros sistemas</li>
+    <li><span class="highlight-cyan">Puede saturar redes</span> con tráfico de replicación</li>
+    <li><span class="highlight-green">Propagación exponencial</span> - puede infectar miles en minutos</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Ejemplos:</strong> WannaCry (2017) - explotó EternalBlue, infectó 200k+ equipos, ransomware; Stuxnet (2010) - sabotaje de centrifugadoras nucleares iraníes</p>
+  </div>
+</section>
+
+<!-- SLIDE 20: TROYANOS -->
+<section>
+  <h2>Troyanos (Trojans)</h2>
+  <div class="box-danger">
+    <p><strong>Definición:</strong> Malware que se disfraza de software legítimo para engañar al usuario y obtener acceso al sistema</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-red">No se autorreplica</span> - se instala por engaño</li>
+    <li><span class="highlight-yellow">Crea backdoors</span> para acceso remoto (RAT - Remote Access Trojan)</li>
+    <li><span class="highlight-cyan">Funciones:</span> Keylogging, captura de pantalla, robo de credenciales, descarga de más malware</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Ejemplos:</strong> Emotet - botnet distribuido por email phishing, costó mil millones €; Zeus/Zbot - banking trojan que robó millones de cuentas bancarias</p>
+  </div>
+</section>
+
+<!-- SLIDE 21: RANSOMWARE -->
+<section>
+  <h2>Ransomware - La Amenaza del Momento</h2>
+  <div class="box-danger">
+    <p><strong>Definición:</strong> Malware que cifra archivos del sistema y exige rescate económico (generalmente en criptomonedas) para descifrarlos</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-red">Doble extorsión:</span> Cifrado + amenaza de publicar datos robados</li>
+    <li><span class="highlight-yellow">Ransomware-as-a-Service (RaaS):</span> Modelo de negocio criminal</li>
+    <li><span class="highlight-cyan">Rescate medio:</span> 200k-2M € dependiendo del sector</li>
+    <li><span class="highlight-green">Vectores:</span> Phishing, RDP expuesto, vulnerabilidades sin parchear</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Casos recientes:</strong> Colonial Pipeline (2021) - 4.4M $ rescate, desabastecimiento combustible EEUU; Hospitales españoles 2023 - sistemas críticos parados semanas</p>
+  </div>
+</section>
+
+<!-- SLIDE 22: SPYWARE Y ADWARE -->
+<section>
+  <h2>Spyware y Adware</h2>
+  <div class="grid-2 small-text">
+    <div class="box-danger">
+      <h3>Spyware</h3>
+      <p>Software que recopila información del usuario sin su conocimiento</p>
+      <ul>
+        <li><strong>Keyloggers:</strong> Capturan pulsaciones de teclado</li>
+        <li><strong>Screen scrapers:</strong> Capturan pantalla</li>
+        <li><strong>Stalkerware:</strong> Monitorización de móviles</li>
+      </ul>
+    </div>
+    <div class="box-warning">
+      <h3>Adware</h3>
+      <p>Muestra anuncios no deseados, a menudo rastreando comportamiento</p>
+      <ul>
+        <li>Ventanas emergentes invasivas</li>
+        <li>Redirecciones de navegador</li>
+        <li>Ralentización del sistema</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 23: ROOTKITS -->
+<section>
+  <h2>Rootkits</h2>
+  <div class="box-danger">
+    <p><strong>Definición:</strong> Malware que obtiene acceso privilegiado al sistema y se oculta modificando el sistema operativo</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-red">Nivel kernel:</span> Se integra en el núcleo del SO, máximo control</li>
+    <li><span class="highlight-yellow">Stealth:</span> Oculta procesos, archivos, conexiones de red, claves de registro</li>
+    <li><span class="highlight-cyan">Persistencia:</span> Sobrevive a reinicios y es difícil de detectar/eliminar</li>
+    <li><span class="highlight-green">Detección:</span> Análisis de memoria, boot desde medio limpio, UEFI Secure Boot</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Ejemplo:</strong> Rootkit Sony BMG (2005) - DRM que instalaba rootkit en CDs de música, afectó a millones de usuarios</p>
+  </div>
+</section>
+
+<!-- SLIDE 24: BOTNETS -->
+<section>
+  <h2>Botnets</h2>
+  <div class="box-danger">
+    <p><strong>Definición:</strong> Red de dispositivos infectados (bots/zombies) controlados remotamente por un atacante (botmaster)</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-red">Usos:</span> DDoS, spam masivo, minado de criptomonedas, ataques distribuidos</li>
+    <li><span class="highlight-yellow">Tamaño:</span> De miles a millones de dispositivos (PCs, IoT, routers)</li>
+    <li><span class="highlight-cyan">C2 (Command & Control):</span> IRC, HTTP, P2P, dominios generados algorítmicamente (DGA)</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Ejemplos:</strong> Mirai (2016) - botnet IoT que lanzó DDoS de 1 Tbps contra Dyn DNS; Emotet - botnet usado para distribuir ransomware</p>
+  </div>
+</section>
+
+<!-- SLIDE 25: PHISHING -->
+<section>
+  <h2>Phishing - Ingeniería Social</h2>
+  <div class="box-danger">
+    <p><strong>Definición:</strong> Técnica de ingeniería social que suplanta identidades legítimas para engañar a víctimas y robar información sensible (credenciales, datos bancarios)</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-red">Email phishing:</span> Correos falsos que imitan organizaciones legítimas</li>
+    <li><span class="highlight-yellow">Spear phishing:</span> Ataques dirigidos a individuos/organizaciones específicas</li>
+    <li><span class="highlight-cyan">Whaling:</span> Phishing dirigido a altos ejecutivos (CEO, CFO)</li>
+    <li><span class="highlight-green">Smishing:</span> Phishing por SMS</li>
+    <li><span class="highlight-cyan">Vishing:</span> Phishing por llamada telefónica</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Indicadores:</strong> Urgencia artificial, errores ortográficos, remitente sospechoso, URLs que no coinciden, solicitudes inusuales</p>
+  </div>
+</section>
+
+<!-- SLIDE 26: ATAQUES DE RED I -->
+<section>
+  <h2>Ataques de Red (I) - MITM</h2>
+  <div class="box-danger">
+    <p><strong>Man-in-the-Middle (MITM):</strong> Atacante se posiciona entre dos partes que se comunican para interceptar, leer o modificar el tráfico</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-red">ARP Spoofing:</span> Envenenar caché ARP para redirigir tráfico</li>
+    <li><span class="highlight-yellow">DNS Spoofing:</span> Respuestas DNS falsas redirigen a sitios maliciosos</li>
+    <li><span class="highlight-cyan">Session hijacking:</span> Robo de cookies/tokens de sesión</li>
+    <li><span class="highlight-green">SSL Stripping:</span> Degradar HTTPS a HTTP para leer tráfico</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Defensas:</strong> HTTPS/TLS, HSTS, certificados pinning, VPN, detección de ARP spoofing, DNSSEC</p>
+  </div>
+</section>
+
+<!-- SLIDE 27: ATAQUES DE RED II -->
+<section>
+  <h2>Ataques de Red (II) - DDoS</h2>
+  <div class="box-danger">
+    <p><strong>DDoS (Distributed Denial of Service):</strong> Saturación de recursos de un sistema/red con tráfico masivo desde múltiples fuentes para dejarlo inaccesible</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-red">Volumétricos:</span> Saturación de ancho de banda (UDP flood, ICMP flood, amplification attacks)</li>
+    <li><span class="highlight-yellow">De protocolo:</span> Agotar recursos del servidor (SYN flood, Ping of Death)</li>
+    <li><span class="highlight-cyan">De aplicación (Layer 7):</span> Peticiones HTTP legítimas pero masivas (HTTP flood, Slowloris)</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Récords:</strong> DDoS de 3.47 Tbps contra Microsoft Azure (2021); Ataques modernos usan botnets IoT y reflexión/amplificación DNS/NTP</p>
+  </div>
+</section>
+
+<!-- SLIDE 28: ATAQUES WEB I -->
+<section>
+  <h2>Ataques Web (I) - Inyección SQL</h2>
+  <div class="box-danger">
+    <p><strong>SQL Injection (SQLi):</strong> Inserción de código SQL malicioso en inputs de aplicación web para manipular la base de datos</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-red">Extracción de datos:</span> Dump completo de bases de datos (usuarios, contraseñas, tarjetas)</li>
+    <li><span class="highlight-yellow">Bypass de autenticación:</span> ' OR '1'='1' -- para acceder sin credenciales</li>
+    <li><span class="highlight-cyan">Modificación/borrado:</span> DROP TABLE, UPDATE sin WHERE</li>
+    <li><span class="highlight-green">Ejecución de comandos:</span> xp_cmdshell en SQL Server para RCE</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Defensa:</strong> Prepared statements, ORMs, validación de inputs, WAF, principio de mínimos privilegios en BD</p>
+  </div>
+</section>
+
+<!-- SLIDE 29: ATAQUES WEB II -->
+<section>
+  <h2>Ataques Web (II) - XSS</h2>
+  <div class="box-danger">
+    <p><strong>Cross-Site Scripting (XSS):</strong> Inyección de scripts maliciosos (JavaScript) en páginas web vistas por otros usuarios</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-red">Reflected XSS:</span> Script en URL, ejecuta cuando víctima hace clic</li>
+    <li><span class="highlight-yellow">Stored XSS:</span> Script almacenado en servidor (comentarios, foros), ejecuta en todos los visitantes</li>
+    <li><span class="highlight-cyan">DOM-based XSS:</span> Manipulación del DOM en cliente</li>
+  </ul>
+  <div class="box-warning" style="margin-top: 1em;">
+    <p><strong>Impacto:</strong> Robo de cookies/sesiones, keylogging, redirección a sitios maliciosos, desfiguración de sitio</p>
+  </div>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Defensa:</strong> Sanitización de inputs/outputs, Content Security Policy (CSP), HTTPOnly cookies, escapado de caracteres especiales</p>
+  </div>
+</section>
+
+<!-- SLIDE 30: ATAQUES WEB III -->
+<section>
+  <h2>Ataques Web (III) - CSRF, XXE, SSRF</h2>
+  <div class="small-text">
+    <div class="box-danger">
+      <h3>CSRF (Cross-Site Request Forgery)</h3>
+      <p>Forzar a usuario autenticado a ejecutar acciones no deseadas en aplicación donde está logueado</p>
+      <p><strong>Ejemplo:</strong> Transferencia bancaria con GET request en imagen: &lt;img src="banco.com/transferir?a=atacante&monto=1000"&gt;</p>
+    </div>
+    <div class="box-danger">
+      <h3>XXE (XML External Entity)</h3>
+      <p>Explotar parsers XML mal configurados para leer archivos locales o hacer SSRF</p>
+    </div>
+    <div class="box-danger">
+      <h3>SSRF (Server-Side Request Forgery)</h3>
+      <p>Hacer que servidor realice peticiones a recursos internos/externos no autorizados</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 31: ATAQUES A CREDENCIALES -->
+<section>
+  <h2>Ataques a Credenciales</h2>
+  <ul class="small-text">
+    <li><span class="highlight-red">Brute Force:</span> Probar todas las combinaciones posibles de contraseña</li>
+    <li><span class="highlight-red">Dictionary Attack:</span> Probar contraseñas comunes de diccionarios</li>
+    <li><span class="highlight-yellow">Credential Stuffing:</span> Usar credenciales robadas de otras brechas (reutilización de contraseñas)</li>
+    <li><span class="highlight-yellow">Password Spraying:</span> Probar contraseñas comunes contra muchos usuarios (evita bloqueos por intentos)</li>
+    <li><span class="highlight-cyan">Rainbow Tables:</span> Hashes precalculados para descifrar contraseñas</li>
+    <li><span class="highlight-green">Pass-the-Hash:</span> Usar hash de contraseña directamente sin descifrarla</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Defensa:</strong> MFA, políticas de contraseñas fuertes, rate limiting, CAPTCHA, salting de hashes, monitorización de intentos fallidos</p>
+  </div>
+</section>
+
+<!-- SLIDE 32: INGENIERÍA SOCIAL AVANZADA -->
+<section>
+  <h2>Ingeniería Social Avanzada</h2>
+  <div class="box-danger">
+    <p><strong>Ingeniería Social:</strong> Manipulación psicológica de personas para que divulguen información confidencial o realicen acciones</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-red">Pretexting:</span> Crear escenario falso para extraer información (falso técnico de soporte)</li>
+    <li><span class="highlight-yellow">Baiting:</span> Ofrecer algo tentador (USB "perdido" con malware)</li>
+    <li><span class="highlight-cyan">Quid Pro Quo:</span> Ofrecer servicio a cambio de información</li>
+    <li><span class="highlight-green">Tailgating:</span> Seguir a persona autorizada para acceder físicamente a instalaciones</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>El humano es el eslabón más débil:</strong> 85% de brechas involucran elemento humano (Verizon DBIR 2024)</p>
+  </div>
+</section>
+
+<!-- SLIDE 33: APT - AMENAZAS PERSISTENTES AVANZADAS -->
+<section>
+  <h2>APT - Amenazas Persistentes Avanzadas</h2>
+  <div class="box-danger">
+    <p><strong>APT:</strong> Ataques sigilosos y prolongados ejecutados por actores sofisticados (generalmente estados-nación) contra objetivos específicos</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-red">Características:</span> Altamente dirigidos, recursos ilimitados, técnicas avanzadas, persistencia a largo plazo</li>
+    <li><span class="highlight-yellow">Objetivos:</span> Espionaje industrial, robo de propiedad intelectual, sabotaje de infraestructuras críticas</li>
+    <li><span class="highlight-cyan">Fases:</span> Reconnaissance exhaustivo → Compromiso inicial → Establecer foothold → Escalada → Movimiento lateral → Misión</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Grupos conocidos:</strong> APT28/Fancy Bear (Rusia), APT29/Cozy Bear (Rusia), APT41 (China), Lazarus Group (Corea del Norte)</p>
+  </div>
+</section>
+
+<!-- SLIDE 34: ATAQUES A IOT -->
+<section>
+  <h2>Ataques a IoT</h2>
+  <div class="box-danger">
+    <p><strong>Internet of Things (IoT):</strong> Dispositivos conectados con seguridad frecuentemente débil - cámaras, routers, termostatos, sensores industriales</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-red">Credenciales por defecto:</span> admin/admin no cambiadas</li>
+    <li><span class="highlight-yellow">Firmware sin actualizar:</span> Vulnerabilidades conocidas sin parchear</li>
+    <li><span class="highlight-cyan">Protocolos inseguros:</span> Telnet, HTTP sin cifrar, MQTT sin autenticación</li>
+    <li><span class="highlight-green">Botnets IoT:</span> Mirai infectó 600k dispositivos IoT para DDoS masivos</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Impacto:</strong> Gateway a redes corporativas, espionaje (cámaras/micrófonos), DDoS, sabotaje de sistemas industriales (OT/ICS)</p>
+  </div>
+</section>
+
+<!-- BLOQUE 3: VECTORES DE ATAQUE -->
+<section>
+  <h1>3. Vectores y Superficie de Ataque</h1>
+  <h3>¿Por dónde atacan?</h3>
+</section>
+
+<!-- SLIDE 35: SUPERFICIE DE ATAQUE -->
+<section>
+  <h2>Superficie de Ataque</h2>
+  <div class="box">
+    <p><strong>Definición:</strong> Suma de todos los puntos de entrada posibles donde un atacante puede intentar comprometer un sistema</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-cyan">Superficie física:</span> Acceso a hardware, puertos USB, servidores</li>
+    <li><span class="highlight-cyan">Superficie digital:</span> Aplicaciones web, APIs, servicios de red, endpoints</li>
+    <li><span class="highlight-cyan">Superficie social:</span> Empleados, contratistas, partners</li>
+  </ul>
+  <div class="box-warning" style="margin-top: 1em;">
+    <p><strong>Principio clave:</strong> Reducir superficie de ataque = hardening (deshabilitar servicios innecesarios, cerrar puertos, limitar accesos, segmentación)</p>
+  </div>
+</section>
+
+<!-- SLIDE 36: VECTORES - EMAIL -->
+<section>
+  <h2>Vector: Email</h2>
+  <div class="box-danger">
+    <p><strong>Vector más común:</strong> 94% de malware se entrega por email (Verizon DBIR)</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-red">Adjuntos maliciosos:</span> .exe, .docm con macros, .pdf con exploits, .zip con malware</li>
+    <li><span class="highlight-yellow">Enlaces a sitios maliciosos:</span> Phishing, descarga drive-by</li>
+    <li><span class="highlight-cyan">Spoofing de remitente:</span> Suplantar dominio legítimo</li>
+    <li><span class="highlight-green">Business Email Compromise (BEC):</span> Comprometer cuenta legítima para fraude</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Defensas:</strong> SPF/DKIM/DMARC, sandboxing de adjuntos, antiphishing training, gateway de email con análisis de URLs</p>
+  </div>
+</section>
+
+<!-- SLIDE 37: VECTORES - WEB -->
+<section>
+  <h2>Vector: Aplicaciones Web</h2>
+  <ul class="small-text">
+    <li><span class="highlight-red">Vulnerabilidades de aplicación:</span> OWASP Top 10 (SQLi, XSS, CSRF, etc.)</li>
+    <li><span class="highlight-yellow">Drive-by downloads:</span> Descarga automática de malware al visitar sitio comprometido</li>
+    <li><span class="highlight-cyan">Exploit kits:</span> Frameworks automatizados que prueban múltiples exploits del navegador</li>
+    <li><span class="highlight-green">Watering hole:</span> Comprometer sitio que la víctima objetivo visita regularmente</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Defensas:</strong> WAF, SAST/DAST, secure SDLC, navegadores actualizados, aislamiento de navegador, EDR</p>
+  </div>
+</section>
+
+<!-- SLIDE 38: VECTORES - RED -->
+<section>
+  <h2>Vector: Red</h2>
+  <ul class="small-text">
+    <li><span class="highlight-red">Escaneo de puertos:</span> Identificar servicios expuestos (Shodan, Masscan, Nmap)</li>
+    <li><span class="highlight-yellow">Explotación de servicios vulnerables:</span> SMB (EternalBlue), RDP, SSH con credenciales débiles</li>
+    <li><span class="highlight-cyan">Redes WiFi inseguras:</span> Evil Twin, WEP/WPA cracking, MITM en WiFi público</li>
+    <li><span class="highlight-green">VPN vulnerables:</span> Exploits en Pulse Secure, Fortinet, Citrix</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Defensas:</strong> Firewall, IPS/IDS, segmentación de red, VPN con MFA, deshabilitar protocolos legacy, monitorización de red</p>
+  </div>
+</section>
+
+<!-- SLIDE 39: VECTORES - MEDIOS EXTRAÍBLES -->
+<section>
+  <h2>Vector: Medios Extraíbles</h2>
+  <ul class="small-text">
+    <li><span class="highlight-red">USB malicioso:</span> Autorun de malware, BadUSB (emular teclado para ejecutar comandos)</li>
+    <li><span class="highlight-yellow">Rubber Ducky / Bash Bunny:</span> Dispositivos USB que ejecutan payloads automáticamente</li>
+    <li><span class="highlight-cyan">Baiting físico:</span> Dejar USBs "perdidos" en aparcamiento para que empleados lo conecten</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Defensas:</strong> Deshabilitar autorun, bloqueo de USB por política, EDR que detecta comportamientos sospechosos, concienciación</p>
+  </div>
+</section>
+
+<!-- SLIDE 40: VECTORES - INSIDER THREATS -->
+<section>
+  <h2>Vector: Amenazas Internas</h2>
+  <div class="box-danger">
+    <p><strong>Insider Threat:</strong> Amenaza proveniente de personas con acceso legítimo (empleados, contratistas, partners)</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-red">Maliciosos:</span> Empleado descontento roba/sabotea datos intencionalmente</li>
+    <li><span class="highlight-yellow">Negligentes:</span> Error humano, mala configuración, caer en phishing</li>
+    <li><span class="highlight-cyan">Comprometidos:</span> Credenciales robadas de empleado legítimo</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Estadísticas:</strong> 34% de brechas involucran insiders (Verizon DBIR 2024)</p>
+  </div>
+  <div class="box-warning" style="margin-top: 1em;">
+    <p><strong>Defensas:</strong> Principio de mínimos privilegios, DLP, monitorización de actividad de usuarios (UEBA), offboarding seguro</p>
+  </div>
+</section>
+
+<!-- SLIDE 41: VECTORES - SUPPLY CHAIN -->
+<section>
+  <h2>Vector: Cadena de Suministro</h2>
+  <div class="box-danger">
+    <p><strong>Supply Chain Attack:</strong> Comprometer proveedor/partner menos seguro para atacar al objetivo final</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-red">Software supply chain:</span> Inyectar malware en actualizaciones legítimas</li>
+    <li><span class="highlight-yellow">Hardware supply chain:</span> Chips maliciosos en dispositivos</li>
+    <li><span class="highlight-cyan">Servicios de terceros:</span> Comprometer SaaS/proveedor cloud</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Casos famosos:</strong> SolarWinds (2020) - backdoor en Orion afectó a 18k organizaciones incluyendo gobierno EEUU; NotPetya (2017) - actualización maliciosa de software de contabilidad ucraniano</p>
+  </div>
+</section>
+
+<!-- SLIDE 42: VECTORES - CLOUD -->
+<section>
+  <h2>Vector: Cloud</h2>
+  <ul class="small-text">
+    <li><span class="highlight-red">Misconfiguración de buckets S3:</span> Millones de registros expuestos públicamente por error</li>
+    <li><span class="highlight-yellow">Credenciales comprometidas:</span> API keys hardcodeadas en repositorios públicos</li>
+    <li><span class="highlight-cyan">Abuso de permisos IAM:</span> Escalada de privilegios en entornos cloud</li>
+    <li><span class="highlight-green">Vulnerabilidades en containers:</span> Imágenes Docker con malware o vulnerabilidades</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Defensas:</strong> CSPM (Cloud Security Posture Management), IAM bien configurado, secretos en vaults (no en código), escaneo de containers, Zero Trust</p>
+  </div>
+</section>
+
+<!-- SLIDE 43: CADENA DE ATAQUE PRÁCTICA -->
+<section>
+  <h2>Cadena de Ataque Práctica - Ejemplo</h2>
+  <ol class="small-text">
+    <li><span class="highlight-cyan">Reconocimiento:</span> Shodan encuentra servidor RDP expuesto (puerto 3389) de empresa objetivo</li>
+    <li><span class="highlight-cyan">Weaponization:</span> Preparar herramienta de brute-force con diccionario de contraseñas comunes</li>
+    <li><span class="highlight-yellow">Delivery:</span> Intentar autenticación RDP contra servidor</li>
+    <li><span class="highlight-yellow">Exploitation:</span> Obtener acceso con credenciales débiles (admin/Password123)</li>
+    <li><span class="highlight-red">Installation:</span> Instalar Cobalt Strike beacon para C2 persistente</li>
+    <li><span class="highlight-red">C2:</span> Beacon conecta periódicamente a servidor C2 del atacante</li>
+    <li><span class="highlight-red">Actions on Objectives:</span> Movimiento lateral con Mimikatz, dump de credenciales, exfiltración de datos sensibles, instalación de ransomware</li>
+  </ol>
+</section>
+
+<!-- SLIDE 44: DETECCIÓN DE AMENAZAS -->
+<section>
+  <h2>Detección de Amenazas - IOCs</h2>
+  <div class="box">
+    <p><strong>IOC (Indicator of Compromise):</strong> Artefactos observables que sugieren que un sistema ha sido comprometido</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-red">IOC de red:</span> IPs maliciosas, dominios C2, patrones de tráfico anómalos</li>
+    <li><span class="highlight-yellow">IOC de host:</span> Hashes de malware (MD5/SHA256), nombres de archivos sospechosos, claves de registro</li>
+    <li><span class="highlight-cyan">IOC de comportamiento:</span> Procesos anómalos, conexiones inusuales, accesos fuera de horario</li>
+  </ul>
+  <div class="box-warning" style="margin-top: 1em;">
+    <p><strong>Fuentes de IOCs:</strong> Threat intelligence feeds, honeypots, análisis de malware, SIEMs, EDR alerts</p>
+  </div>
+</section>
+
+<!-- BLOQUE 4: MARCO LEGAL Y NORMATIVO -->
+<section>
+  <h1>4. Marco Legal y Normativo</h1>
+  <h3>Regulaciones de ciberseguridad</h3>
+</section>
+
+<!-- SLIDE 45: POR QUÉ REGULACIÓN -->
+<section>
+  <h2>¿Por qué Regulación en Ciberseguridad?</h2>
+  <ul class="small-text">
+    <li><span class="highlight-cyan">Protección de datos personales:</span> Derecho fundamental en UE (GDPR)</li>
+    <li><span class="highlight-yellow">Infraestructuras críticas:</span> Energía, sanidad, transporte - su compromiso afecta a millones</li>
+    <li><span class="highlight-red">Responsabilidad corporativa:</span> Directivos deben rendir cuentas por ciberseguridad</li>
+    <li><span class="highlight-green">Coordinación transnacional:</span> Cibercrimen no tiene fronteras, respuesta debe ser coordinada</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Evolución:</strong> De opcional a obligatorio - multas millonarias por incumplimiento impulsan inversión en ciberseguridad</p>
+  </div>
+</section>
+
+<!-- SLIDE 46: GDPR -->
+<section>
+  <h2>GDPR - Reglamento General de Protección de Datos</h2>
+  <div class="box">
+    <p><strong>GDPR (2018):</strong> Regulación UE sobre privacidad y protección de datos personales de ciudadanos europeos</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-cyan">Ámbito:</span> Cualquier organización que procese datos de residentes UE, sin importar dónde esté ubicada</li>
+    <li><span class="highlight-yellow">Principios clave:</span> Transparencia, minimización de datos, exactitud, limitación de almacenamiento, integridad y confidencialidad</li>
+    <li><span class="highlight-red">Derechos de usuarios:</span> Acceso, rectificación, supresión (derecho al olvido), portabilidad, oposición</li>
+    <li><span class="highlight-green">Obligaciones:</span> Notificar brechas en 72h, DPO obligatorio en ciertos casos, Privacy by Design</li>
+  </ul>
+  <div class="box-danger" style="margin-top: 1em;">
+    <p><strong>Sanciones:</strong> Hasta 20M€ o 4% facturación anual global (lo que sea mayor)</p>
+  </div>
+</section>
+
+<!-- SLIDE 47: NIS2 -->
+<section>
+  <h2>NIS2 - Directiva de Ciberseguridad UE</h2>
+  <div class="box">
+    <p><strong>NIS2 (2023, transponer antes oct 2024):</strong> Actualización de directiva NIS para mejorar ciberseguridad en UE</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-cyan">Más sectores cubiertos:</span> Energía, transporte, banca, sanidad, agua, infraestructuras digitales, administración pública</li>
+    <li><span class="highlight-yellow">Entidades esenciales vs importantes:</span> Diferentes niveles de supervisión</li>
+    <li><span class="highlight-red">Notificación de incidentes:</span> Menos de 24h para alerta inicial, 72h para informe</li>
+    <li><span class="highlight-green">Gestión de riesgos obligatoria:</span> Políticas de seguridad, análisis de riesgos, continuidad de negocio, seguridad supply chain</li>
+  </ul>
+  <div class="box-danger" style="margin-top: 1em;">
+    <p><strong>Sanciones:</strong> Hasta 10M€ o 2% facturación anual. Responsabilidad personal de directivos</p>
+  </div>
+</section>
+
+<!-- SLIDE 48: ENS - ESPAÑA -->
+<section>
+  <h2>ENS - Esquema Nacional de Seguridad</h2>
+  <div class="box">
+    <p><strong>ENS (Real Decreto 311/2022):</strong> Marco de referencia de ciberseguridad para sector público español</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-cyan">Obligatorio:</span> Toda la administración pública (estatal, autonómica, local) y sus proveedores</li>
+    <li><span class="highlight-yellow">Certificable:</span> Permite auditorías externas para evidenciar cumplimiento</li>
+    <li><span class="highlight-green">Incluye requisitos NIS2:</span> España anticipa transponer NIS2 mediante ENS</li>
+    <li><span class="highlight-red">Categorización:</span> Sistemas se clasifican BAJO/MEDIO/ALTO según impacto (disponibilidad, integridad, confidencialidad, autenticidad, trazabilidad)</li>
+  </ul>
+  <div class="box-warning" style="margin-top: 1em;">
+    <p><strong>CCN-STIC:</strong> Centro Criptológico Nacional publica guías técnicas de implementación (CCN-STIC)</p>
+  </div>
+</section>
+
+<!-- SLIDE 49: OTRAS NORMATIVAS RELEVANTES -->
+<section>
+  <h2>Otras Normativas Relevantes</h2>
+  <div class="small-text">
+    <div class="box">
+      <h3>ISO 27001</h3>
+      <p>Estándar internacional de SGSI (Sistema de Gestión de Seguridad de la Información) - certificable</p>
+    </div>
+    <div class="box">
+      <h3>PCI DSS</h3>
+      <p>Payment Card Industry Data Security Standard - obligatorio para procesar tarjetas de crédito</p>
+    </div>
+    <div class="box">
+      <h3>LOPD-GDD (España)</h3>
+      <p>Ley Orgánica de Protección de Datos y Garantía de Derechos Digitales - adaptación española de GDPR</p>
+    </div>
+    <div class="box">
+      <h3>Cyber Resilience Act (CRA - UE)</h3>
+      <p>Regulación de ciberseguridad de productos hardware/software con elementos digitales</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 50: RESPONSABILIDADES LEGALES -->
+<section>
+  <h2>Responsabilidades Legales</h2>
+  <ul class="small-text">
+    <li><span class="highlight-red">Directivos (C-level):</span> NIS2 establece responsabilidad personal - deben formarse en ciberseguridad, supervisar estrategia, aprobar presupuestos</li>
+    <li><span class="highlight-yellow">CISO / DPO:</span> Gestionar programa de seguridad, supervisar cumplimiento, reportar a dirección</li>
+    <li><span class="highlight-cyan">Departamento IT:</span> Implementar controles técnicos, gestionar incidentes, mantener sistemas actualizados</li>
+    <li><span class="highlight-green">Todos los empleados:</span> Cumplir políticas de seguridad, reportar incidentes, formación continua</li>
+  </ul>
+  <div class="box-danger" style="margin-top: 1em;">
+    <p><strong>Consecuencias incumplimiento:</strong> Multas millonarias, responsabilidad penal (delitos informáticos), daño reputacional, pérdida de clientes, inhabilitación de directivos</p>
+  </div>
+</section>
+
+<!-- SLIDE 51: NOTIFICACIÓN DE INCIDENTES -->
+<section>
+  <h2>Notificación de Incidentes</h2>
+  <div class="box-danger">
+    <p><strong>Obligación legal:</strong> Notificar brechas de seguridad a autoridades y afectados en plazos estrictos</p>
+  </div>
+  <div class="grid-2 small-text">
+    <div>
+      <h3>GDPR - Brechas de datos</h3>
+      <ul>
+        <li>A autoridad de control: <span class="highlight-red">72 horas</span></li>
+        <li>A afectados: Sin dilación indebida si alto riesgo</li>
+        <li>Contenido: Naturaleza, datos afectados, consecuencias, medidas tomadas</li>
+      </ul>
+    </div>
+    <div>
+      <h3>NIS2 - Incidentes</h3>
+      <ul>
+        <li>Alerta inicial: <span class="highlight-red">24 horas</span></li>
+        <li>Notificación: <span class="highlight-red">72 horas</span></li>
+        <li>Informe final: <span class="highlight-yellow">1 mes</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 52: CUMPLIMIENTO - BUENAS PRÁCTICAS -->
+<section>
+  <h2>Cumplimiento - Buenas Prácticas</h2>
+  <ul class="small-text">
+    <li><span class="highlight-cyan">Inventario de activos:</span> Conocer qué datos/sistemas se tienen</li>
+    <li><span class="highlight-cyan">Análisis de riesgos:</span> Identificar amenazas y vulnerabilidades (ISO 27005, NIST)</li>
+    <li><span class="highlight-yellow">Políticas y procedimientos:</span> Documentar normas de seguridad, acceso, respuesta a incidentes</li>
+    <li><span class="highlight-yellow">Formación continua:</span> Security awareness training para todos</li>
+    <li><span class="highlight-green">Auditorías regulares:</span> Internas y externas, pentesting</li>
+    <li><span class="highlight-green">Planes de respuesta:</span> IRP (Incident Response Plan), DRP (Disaster Recovery Plan), BCP (Business Continuity Plan)</li>
+    <li><span class="highlight-red">Monitorización y logging:</span> SIEM, SOC, análisis de logs</li>
+  </ul>
+</section>
+
+<!-- BLOQUE 5: OFENSIVA VS DEFENSIVA -->
+<section>
+  <h1>5. Ciberseguridad Ofensiva vs Defensiva</h1>
+  <h3>Red Team vs Blue Team</h3>
+</section>
+
+<!-- SLIDE 53: SEGURIDAD OFENSIVA -->
+<section>
+  <h2>Seguridad Ofensiva - Red Team</h2>
+  <div class="box-danger">
+    <p><strong>Seguridad Ofensiva:</strong> Simular ataques reales para identificar vulnerabilidades antes que los atacantes</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-red">Pentesting:</span> Pruebas de penetración autorizadas con alcance definido</li>
+    <li><span class="highlight-red">Red Teaming:</span> Simulación de APT con objetivos específicos (exfiltrar dato X, acceder a sistema Y)</li>
+    <li><span class="highlight-yellow">Vulnerability Assessment:</span> Escaneo y análisis de vulnerabilidades</li>
+    <li><span class="highlight-cyan">Bug Bounty:</span> Programas que recompensan a investigadores por reportar vulnerabilidades</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Mentalidad:</strong> Pensar como atacante - "¿Cómo rompería esto?"</p>
+  </div>
+</section>
+
+<!-- SLIDE 54: HERRAMIENTAS OFENSIVAS -->
+<section>
+  <h2>Herramientas Ofensivas Clave</h2>
+  <ul class="small-text">
+    <li><span class="highlight-red">Kali Linux:</span> Distribución con +600 herramientas de pentesting preinstaladas</li>
+    <li><span class="highlight-red">Metasploit:</span> Framework de explotación con miles de exploits</li>
+    <li><span class="highlight-yellow">Burp Suite:</span> Proxy para testing de aplicaciones web (SQLi, XSS, etc.)</li>
+    <li><span class="highlight-yellow">Nmap:</span> Escaneo de redes y enumeración de servicios</li>
+    <li><span class="highlight-cyan">Wireshark:</span> Análisis de tráfico de red</li>
+    <li><span class="highlight-cyan">Cobalt Strike:</span> Plataforma comercial de Red Team para C2</li>
+    <li><span class="highlight-green">Hashcat / John the Ripper:</span> Cracking de contraseñas</li>
+    <li><span class="highlight-green">Mimikatz:</span> Extracción de credenciales de Windows</li>
+  </ul>
+</section>
+
+<!-- SLIDE 55: SEGURIDAD DEFENSIVA -->
+<section>
+  <h2>Seguridad Defensiva - Blue Team</h2>
+  <div class="box">
+    <p><strong>Seguridad Defensiva:</strong> Proteger activos, detectar amenazas, responder a incidentes y recuperar sistemas</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-cyan">Hardening:</span> Asegurar sistemas reduciendo superficie de ataque</li>
+    <li><span class="highlight-cyan">Monitorización:</span> SIEM, IDS/IPS, EDR para detectar actividad maliciosa</li>
+    <li><span class="highlight-green">Threat Hunting:</span> Búsqueda proactiva de amenazas no detectadas por herramientas</li>
+    <li><span class="highlight-green">Incident Response:</span> Contención, erradicación, recuperación de incidentes</li>
+    <li><span class="highlight-yellow">Threat Intelligence:</span> Recopilación y análisis de información sobre amenazas</li>
+  </ul>
+  <div class="box" style="margin-top: 1em;">
+    <p><strong>Mentalidad:</strong> Asumir compromiso - "¿Qué haría un atacante una vez dentro?"</p>
+  </div>
+</section>
+
+<!-- SLIDE 56: HERRAMIENTAS DEFENSIVAS -->
+<section>
+  <h2>Herramientas Defensivas Clave</h2>
+  <ul class="small-text">
+    <li><span class="highlight-cyan">SIEM:</span> Splunk, Elastic Security, QRadar - correlación de eventos y detección de amenazas</li>
+    <li><span class="highlight-cyan">EDR:</span> CrowdStrike, SentinelOne, Microsoft Defender ATP - protección avanzada de endpoints</li>
+    <li><span class="highlight-yellow">IDS/IPS:</span> Snort, Suricata, Zeek - detección/prevención de intrusiones en red</li>
+    <li><span class="highlight-yellow">Firewall:</span> Palo Alto, Fortinet, pfSense - control de tráfico de red</li>
+    <li><span class="highlight-green">SOAR:</span> Orquestación y automatización de respuesta a incidentes</li>
+    <li><span class="highlight-green">Threat Intelligence Platforms:</span> MISP, ThreatConnect - gestión de IOCs</li>
+    <li><span class="highlight-red">Vulnerability Scanners:</span> Nessus, Qualys, OpenVAS</li>
+  </ul>
+</section>
+
+<!-- SLIDE 57: SOC - SECURITY OPERATIONS CENTER -->
+<section>
+  <h2>SOC - Security Operations Center</h2>
+  <div class="box">
+    <p><strong>SOC:</strong> Centro de operaciones de seguridad que monitoriza, detecta, analiza y responde a incidentes 24/7</p>
+  </div>
+  <div class="grid-2 small-text">
+    <div>
+      <h3>Funciones principales</h3>
+      <ul>
+        <li>Monitorización continua de logs y eventos</li>
+        <li>Detección de amenazas (SIEM alerts)</li>
+        <li>Triaje y análisis de incidentes</li>
+        <li>Respuesta a incidentes</li>
+        <li>Threat hunting</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Roles típicos</h3>
+      <ul>
+        <li>Analista L1: Monitorización, triaje</li>
+        <li>Analista L2: Investigación profunda</li>
+        <li>Analista L3/Threat Hunter: Caza proactiva</li>
+        <li>Incident Responder: Contención y remediación</li>
+        <li>SOC Manager: Coordinación</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 58: PURPLE TEAM -->
+<section>
+  <h2>Purple Team - Colaboración</h2>
+  <div class="box">
+    <p><strong>Purple Team:</strong> Colaboración entre Red Team y Blue Team para mejorar defensas</p>
+  </div>
+  <ul class="small-text">
+    <li><span class="highlight-red">Red Team ejecuta ataque</span> mientras <span class="highlight-cyan">Blue Team intenta detectar y responder</span></li>
+    <li><span class="highlight-yellow">Feedback inmediato:</span> Red Team explica técnicas usadas, Blue Team documenta gaps en detección</li>
+    <li><span class="highlight-green">Objetivo:</span> Mejorar capacidades de detección y respuesta (no solo encontrar vulnerabilidades)</li>
+    <li><span class="highlight-cyan">Técnicas comunes:</span> Emulación de adversarios (MITRE ATT&CK), tuning de SIEM rules, validación de detecciones</li>
+  </ul>
+  <div class="box-warning" style="margin-top: 1em;">
+    <p><strong>Resultado:</strong> Reducción de dwell time (tiempo que atacante permanece sin detectar), mejora de runbooks de respuesta</p>
+  </div>
+</section>
+
+<!-- SLIDE 59: CARRERA EN CIBERSEGURIDAD -->
+<section>
+  <h2>Carrera en Ciberseguridad</h2>
+  <div class="grid-2 small-text">
+    <div class="box">
+      <h3>Roles Ofensivos</h3>
+      <ul>
+        <li>Pentester</li>
+        <li>Red Team Operator</li>
+        <li>Vulnerability Researcher</li>
+        <li>Exploit Developer</li>
+        <li>Bug Bounty Hunter</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Roles Defensivos</h3>
+      <ul>
+        <li>SOC Analyst</li>
+        <li>Incident Responder</li>
+        <li>Threat Hunter</li>
+        <li>Security Engineer</li>
+        <li>CISO / Security Manager</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box-warning" style="margin-top: 1em;">
+    <p><strong>Skills clave:</strong> Redes, sistemas operativos (Linux/Windows), programación (Python, Bash, PowerShell), análisis forense, normativa</p>
+  </div>
+</section>
+
+<!-- SLIDE 60: CONCLUSIÓN Y PRÓXIMOS PASOS -->
+<section>
+  <h2>Conclusión y Próximos Pasos</h2>
+  <div class="box">
+    <h3>Has aprendido:</h3>
+    <ul class="small-text">
+      <li>Fundamentos de ciberseguridad (Tríada CIA, conceptos clave)</li>
+      <li>Amenazas y ataques (Malware, phishing, ataques web, APT)</li>
+      <li>Vectores de ataque y superficie de exposición</li>
+      <li>Marco legal (GDPR, NIS2, ENS, responsabilidades)</li>
+      <li>Diferencias entre seguridad ofensiva y defensiva</li>
+    </ul>
+  </div>
+  <div class="box-warning" style="margin-top: 1em;">
+    <h3>Próximos pasos:</h3>
+    <ul class="small-text">
+      <li><span class="highlight-cyan">Práctica:</span> TryHackMe, HackTheBox, OverTheWire - labs interactivos</li>
+      <li><span class="highlight-green">Certificaciones:</span> CompTIA Security+, CEH, OSCP (ofensiva), CISSP (gestión)</li>
+      <li><span class="highlight-yellow">Comunidad:</span> Conferences (RootedCON, BlackHat), CTFs, grupos locales</li>
+      <li><span class="highlight-red">Especialización:</span> Elige path (ofensivo/defensivo) y profundiza</li>
+    </ul>
+  </div>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+<script>
+Reveal.initialize({
+  controls: true,
+  progress: true,
+  history: true,
+  center: true,
+  transition: 'slide',
+  slideNumber: 'c/t',
+  hash: true
+});
+</script>
+</body>
+</html>
+
